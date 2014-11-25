@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+	<head>
+		{{> links}}
+	</head>
+	<body>
+		<div id="main">
+			{{> header}}
+			<div id="content">
+				<div id="pagetitle">Post</div>
+				<textarea onkeydown="CheckForEnter('newpostcontent')" onkeyup="ChangeExample('title')" id="newposttitle"></textarea>
+				<textarea id="newpostcontent" onkeyup="ChangeExample('content')"></textarea>
+				<form action='/postpic' id='uploadpicform' enctype="multipart/form-data" method="post">
+					<input type="file" id='pic' name="upload" multiple="multiple" accept="image/*"><br>
+				</form>
+				<a class='submit' id='postsubmit'>Post</a>
+                <div class="post postred">
+                    <div class="postcontent">
+                        <img class="postimage imageleft" src="/images/exampleimage.jpg">
+                        <div class="posttextbox textboxred">
+                            <div name="title" class="postTitle"></div>
+                            <div name="content" class="posttext"></div>
+                        </div>
+                    </div>
+                </div>
+			</div>
+			{{> footer}}
+		</div>
+		<script>
+			function ChangeExample (value){
+
+				if (value=='title'){
+					title = (document.getElementById('newposttitle').value);
+					document.getElementsByName('title')[0].innerHTML = title;
+				}else if (value=='content'){
+					content = (document.getElementById('newpostcontent').value).replace(/\r?\n/g, '<br />');
+					document.getElementsByName('content')[0].innerHTML = content;
+				}
+			}
+			function SendPosts () {
+				var fullPath = document.getElementById('pic').value;
+				if (fullPath) {
+					var startIndex = (fullPath.indexOf('\\') >= 0 ? fullPath.lastIndexOf('\\') : fullPath.lastIndexOf('/'));
+					var filename = fullPath.substring(startIndex);
+					if (filename.indexOf('\\') === 0 || filename.indexOf('/') === 0) {
+						filename = filename.substring(1);
+					}
+				}
+				postTitle = document.getElementById('newposttitle').value;
+				postContent = document.getElementById('newpostcontent').value.replace(/\r?\n/g, '<br />');
+				console.log(postContent);
+				postDate = new Date();
+				if (document.getElementById('pic').value==''){
+					image='false';
+				}else{
+					image = 'public/images/'+filename;
+				}
+				object = {'title':postTitle,'date':postDate,'content':postContent,'image':image};
+				console.log(object.content)
+				toSend = JSON.stringify(object);
+				document.getElementById('uploadpicform').submit();
+				$.ajax({
+					type: 'POST',
+					url: '/newpost',
+					data: toSend,
+					contentType: 'application/json'
+				})
+			}
+			$('#postsubmit').click(SendPosts);
+		</script>
+	</body>
+</html>

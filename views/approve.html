@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		{{> links}}
+	</head>
+	<body>
+		<div id="main">
+			{{> header}}
+			<div id='content'>
+			</div>
+			{{> footer}}
+		</div>
+		<script>
+			GetAccounts();
+			function GetAccounts () {
+				$.ajax({
+					type : "GET",
+					url : "/tba",
+					success : function (data){
+							received = JSON.parse(data);
+						for (i=0;i<received.length;i++){
+							user = JSON.parse(received[i]);
+							parentdiv = document.createElement('div');
+							parentdiv.className = 'approvebox';
+							document.getElementById('content').appendChild(parentdiv);
+
+							image = document.createElement('img');
+							image.className = 'approveimage';
+							image.src = user.image;
+							parentdiv.appendChild(image);
+
+							text = document.createElement('div');
+							text.className = 'approvetext';
+							text.innerHTML = 'Name : '+user.name+"<br />Character : "+user.character+"<br />Username : "+user.username+"<br />Password : "+user.password+"<br />";
+							parentdiv.appendChild(text);
+
+							approvebut = document.createElement('a');
+							approvebut.className = "approvesub";
+							approvebut.innerHTML = "Approve";
+							parentdiv.appendChild(approvebut);
+							approvebut.setAttribute('href','');
+							approvebut.id = i;
+							user = (JSON.stringify(user.file));
+							approvebut.setAttribute('onClick','ApproveAccount('+user+','+i+')');
+						}
+					}
+				})
+			}
+			function ApproveAccount (file,i){
+				console.log("ASDF");
+				object = {"file":file,"i":i}
+				toSend = JSON.stringify(object);
+				$.ajax({
+					type : "POST",
+					url : "/approveaccount",
+					data : toSend,
+					contentType : 'application/json',
+					success : function (data){
+						button = document.getElementById(i);
+						button.style.backgroundColor = '#9f823d';
+						button.innerHTML = 'Approved';
+					}
+				})
+			}
+		</script>
+	</body>
+</html>

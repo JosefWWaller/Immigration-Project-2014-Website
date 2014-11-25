@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+	<head>
+		{{> links}}
+	</head>
+	<body>
+		<div id="main">
+			{{> header}}
+			<div id="content">
+				<div id="pagetitle">Login/Register</div>
+				<div id="login">
+					<div id="loginbox">
+						<div class="logintitle">Login</div>
+						<div id="fields">
+							<div class='text'>
+								Username :<br><br>
+								Password : 
+							</div>
+							<div id='requiredbox'>
+								<div class='required' id='userreq'>Required</div>
+								<div class='required' id='passreq'>Required</div>
+							</div>
+							<div id='textareabox'>
+								<textarea class='fieldtextarea logintextarea' id='user' onkeypress="CheckForEnter('pass')"></textarea>
+								<textarea class='fieldtextarea logintextarea' id='pass' onkeypress="CheckForEnter('loginsubmit')"></textarea>
+							</div>
+						</div>
+						<a id='loginsubmit' class='submit'>Sign In</a>
+					</div>
+				</div>
+				<div id="register">
+					<div id="registerbox">
+						<div class="logintitle">Register</div>
+						<div id="fields">
+							<div class='text'>
+								Name :<br><br>
+								Character :<br><br>
+								Username :<br><br>
+								Password :<br><br>
+								Admin Code :<br><br>
+							</div>
+							<div id="requiredbox">
+								<div class='required' id='namereq'>Required</div>
+								<div class='required' id='characterreq'>Required</div>
+								<div class='required' id='newuserreq'>Required</div>
+								<div class='required' id='newpassreq'>Required</div>
+								<div class='required' id='picreq'>Required</div>
+							</div>
+							<div id='textareabox'>
+								<textarea id='name' class='fieldtextarea registertextarea' onkeypress="CheckForEnter('character')"></textarea>
+								<textarea id='character'class='fieldtextarea registertextarea' onkeypress="CheckForEnter('newuser')"></textarea>
+								<textarea id='newuser' class='fieldtextarea registertextarea' onkeypress="CheckForEnter('newpass')"></textarea>
+								<textarea id='newpass' class='fieldtextarea registertextarea' onkeypress="CheckForEnter('code')"></textarea>
+								<textarea id='code' class='fieldtextarea registertextarea' onkeypress="CheckForEnter('submit')"></textarea>
+
+							</div>
+							<form action='/userpic' id='uploadpicform' enctype="multipart/form-data" method="post">
+								<input type="file" id='pic' name="upload" multiple="multiple" accept="image/*"><br>
+							</form>
+							<!--<form action='/userpic' id='uploadpicform' enctype="multipart/form-data" method="post">
+								<input type="file" name="upload" multiple="multiple" accept="image/*">
+							</form>-->
+						</div>
+						<div class="submitbox">
+							<a id='registersubmit' class='submit'>Sign Up</a>
+						</div>
+					</div>
+				</div>
+			</div>
+			</div>
+			<div id='footer'>Design by Colin, Script by Joe<br><br> I am an external link. :(</div>
+		</div><!--main-->
+		<script>
+			function SendUserInfo () {
+				//Sets the error boolean to false
+				error = false;
+
+				//Gets all the fields
+				name = document.getElementById('name').value;
+				character = document.getElementById('character').value;
+				username = document.getElementById('newuser').value;
+				password = document.getElementById('newpass').value;
+				code = document.getElementById('code').value;
+
+				//Checks is any were empty
+
+				if (name==''){
+					PlaceRequired('namereq','name');
+					error = true;
+				}else{
+					DeleteRequired('namereq','name');
+				}
+				if (character==''){
+					PlaceRequired('characterreq','character');
+					error = true;
+				}else{
+					DeleteRequired('characterreq','character');
+				}
+				if(username==''){
+					PlaceRequired('newuserreq','newuser');
+					error = true;
+				}else{
+					DeleteRequired('newuserreq','newuser');
+				}
+				if(password==''){
+					PlaceRequired('newpassreq','newpass');
+					error = true;
+				}else{
+					DeleteRequired('newpassreq','newpass');
+				}
+				if (document.getElementById('pic').value==''){
+					PlaceRequired('picreq','pic');
+					error = true;
+				}else{
+					DeleteRequired('picreq','pic');
+				}
+				if (!error){
+					var fullPath = document.getElementById('pic').value;
+					if (fullPath) {
+						var startIndex = (fullPath.indexOf('\\') >= 0 ? fullPath.lastIndexOf('\\') : fullPath.lastIndexOf('/'));
+						var filename = fullPath.substring(startIndex);
+						if (filename.indexOf('\\') === 0 || filename.indexOf('/') === 0) {
+							filename = filename.substring(1);
+						}
+					}
+					info = {'name':name,'character':character,'username':username,'password':password,'image':'public/images/userpics/'+filename,'code':code}
+					console.log(info);
+					toSend = JSON.stringify(info);
+
+					$.ajax({
+						type : "POST",
+						url : "/register",
+						data : toSend,
+						contentType : 'application/json',
+						dataType : 'json',
+						success : function(data){
+							result = NewAccount(data);
+						}
+					})
+				}
+			}
+			function NewAccount (data) {
+				error = false;
+				var usernameError;
+				if (data.name == false){
+					error = true;
+					PlaceRequired('namereq','name');
+					document.getElementById('namereq').innerHTML = "Taken";
+				}
+				if (data.character == false){
+					error = true;
+					PlaceRequired('characterreq','character');
+					document.getElementById('characterreq').innerHTML = "Taken";
+				}
+				if (data.username == false){
+					error = true;
+					usernameError = true;
+					PlaceRequired('newuserreq','newuser');
+					document.getElementById('newuserreq').innerHTML = "Taken";
+				}
+				if (data.password == false){
+					if (usernameError){
+						error = true;
+						PlaceRequired('newpassreq','newpass');
+						document.getElementById('newpassreq').innerHTML = "Taken";
+					}
+				}
+				if (!error){
+					document.getElementById('uploadpicform').submit();
+				}
+			}
+			function CheckUserInfo () {
+				error = false;
+				username = document.getElementById('user').value;
+				password = document.getElementById('pass').value;
+				if (username==''){
+					PlaceRequired('userreq','user')
+					error = true;
+				}
+				if(password==''){
+					PlaceRequired('passreq','pass');
+					error = true;
+				}
+				object = {'username':username,'password':password};
+				toSend = JSON.stringify(object);
+				if (!error){
+					$.ajax({
+						type : "POST",
+						url : "/checkuser",
+						data : toSend,
+						contentType : 'application/json',
+						dataType : 'text',
+						success : function(data){
+							Login(data);
+						}
+					})
+				}
+			}
+			function Login (data){
+				if (data=='true'){
+					window.location.assign('/index');
+				}else{
+					console.log(data);
+					PlaceRequired ('userreq','user');
+					document.getElementById('pass').style.border = '1px solid #ff3434';
+					if (data=='notappr'){
+						document.getElementById('userreq').innerHTML = "TBA";
+					}else{
+						document.getElementById('userreq').innerHTML = "Invalid";
+					}
+				}
+			}
+			function PlaceRequired (name,name2){
+					document.getElementById(name).style.visibility = "visible";
+					document.getElementById(name).innerHTML="Required";
+					document.getElementById(name2).style.border = '1px solid #ff3434';
+				}
+				function DeleteRequired (name,name2){
+					if (document.getElementById(name)){
+							document.getElementById(name).style.visibility = "hidden";
+							document.getElementById(name2).style.border = '0px';
+					}
+			}
+
+			$("#registersubmit").click(SendUserInfo);
+			$('#loginsubmit').click(CheckUserInfo);
+		</script>
+	</body>
+</html>

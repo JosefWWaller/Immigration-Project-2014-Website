@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+	<head>
+		{{> links}}
+	</head>
+	<body>
+		<div id="main">
+			{{>header}}
+			<div id="content">
+                <div class="allpost postred">
+                    <div class="postcontent">
+                        <img class="postimage imageleft" src="/images/exampleimage.jpg">
+                        <div class="posttextbox textboxred">
+                            <div class="postTitle">Example text</div>
+                            <div class="posttext">
+                                This is some example text.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="comment postbrown">
+                	<div class="commentuser">
+                		<div class="commentImage"></div>
+                		<div class="commentname">Josef</div><br>
+                		<div class="commentcharacter">Test Account</div>
+                	</div>
+                	<div class="commenttext">
+                	I hate this post and everything it represents
+                	</div>
+                </div>
+            </div>
+			{{>footer}}
+		</div><!--Main-->
+		<script>
+			GetPosts();
+			function GetPosts () {
+				$.ajax({
+					type: "GET",
+					url: "/allposts",
+					success: function (data){
+						MakePosts(data);
+					}
+				})
+			}
+			function MakePosts (data){
+				console.log(data);
+				var red;
+				var left;
+				for (i = 0; i < data.length; i++){
+
+					post = JSON.parse(data[i]);
+					//Parent Div
+					parentdiv = document.createElement('div');
+					if (red){
+						parentdiv.className = 'allpost postbrown';
+					}else{
+						parentdiv.className = 'allpost postred';
+					}
+					parentdiv.setAttribute('name',post.file);
+					parentdiv.id = i;
+					document.getElementById('content').appendChild(parentdiv);
+
+					//Post Content Div
+					postcondiv = document.createElement('div');
+					postcondiv.className = 'postcontent';
+					parentdiv.appendChild(postcondiv);
+
+					//Image
+					if (!(post.image=='false')){
+						image = document.createElement('img');
+						if (left){
+							image.className = 'postimage imageleft';
+						}else{
+							image.className = 'postimage imageright'
+						}
+						image.src = post.image;
+						postcondiv.appendChild(image);
+					}
+
+					//Text Box
+					posttextbox = document.createElement('div');
+					if (red){
+						posttextbox.className = 'posttextbox textboxbrown';
+					}else{
+						posttextbox.className = 'posttextbox textboxred';
+					}
+					postcondiv.appendChild(posttextbox);
+
+					//Post Title
+					title = document.createElement('div');
+					title.className = 'postTitle';
+					title.innerHTML = post.title;
+					posttextbox.appendChild(title);
+
+					//Post Text
+					text = document.createElement('div');
+					text.className = 'posttext';
+					posttextbox.appendChild(text);
+					text.innerHTML = post.content;
+					red = !red;
+
+					if (!post.comments == false){
+						comments = JSON.parse(post.comments);
+						for (x=0;x<comments.length;x++){
+
+							comment = comments[x];
+
+							//Parent Comment Div
+							commentParent = document.createElement('div');
+							if (red) {
+								commentParent.className = 'comment postbrown';
+							}else{
+								commentParent.className = 'comment postred';
+							}
+							document.getElementById('content').appendChild(commentParent);
+
+							//Comment User div
+							commentUser = document.createElement('div');
+							commentUser.className = 'commentuser';
+							commentParent.appendChild(commentUser);
+
+							//Comment User Image div
+							commentimg = document.createElement('img');
+							commentimg.className = 'commentImage';
+							commentUser.appendChild(commentimg);
+							commentimg.src = comments.image;
+
+							//Comment User name div
+							commentName = document.createElement('div');
+							commentName.className = 'commentname';
+							commentUser.appendChild(commentName);
+							commentName.innerHTML = comment.user;
+
+							//Comment User character div
+							commentCharacter = document.createElement('div');
+							commentCharacter.className = 'commentCharacter';
+							commentCharacter.innerHTML = comment.character;
+							commentUser.appendChild(commentCharacter);
+
+							//Comment Content div
+							comContent = document.createElement('div');
+							comContent.className = 'commenttext';
+							comContent.innerHTML = comment.content;
+							commentParent.appendChild(comContent);
+							red = !red;
+						}
+					}
+					//New comment div
+					newcomment = document.createElement('textarea');
+					if (red){
+						newcomment.className = 'newcomment postbrown';
+					}else{
+						newcomment.className = 'newcomment postred';
+					}
+					newcomment.setAttribute('name',i);
+					newcomment.placeholder = "Post a comment";
+					document.getElementById('content').appendChild(newcomment);
+
+					//New background
+					background = document.createElement('div');
+					document.getElementById('content').appendChild(background);
+					if(red){
+						background.className = 'commentbackground postbrown';
+					}else{
+						background.className = 'commentbackground postred';
+					}
+					//Submit 
+					submit = document.createElement('a');
+					submit.className = 'submitcom';
+					submit.innerHTML = 'Save';
+					submit.setAttribute('onClick','SendComment('+i+')')
+					submit.setAttribute('href','#');
+					background.appendChild(submit);
+					if (!post.comments){
+						red=!red;
+						left=!left;
+					}
+				}
+			}
+			function SendComment (i) {
+				console.log(i);
+				content = document.getElementsByClassName('newcomment')[i].value;
+				post = document.getElementById(i);
+				file = post.getAttribute('name');
+				object = {"file":file,"content":content};
+				console.log(object);
+				toSend = JSON.stringify(object);
+				$.ajax({
+					type:"POST",
+					url:"/newcomment",
+					data: toSend,
+					dataType: "json",
+					contentType: "application/json",
+					success: function (file){
+						
+					}
+				})
+			}
+		</script>
+	</body>
+</html>

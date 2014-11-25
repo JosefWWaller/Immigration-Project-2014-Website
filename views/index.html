@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+	<head>
+        {{> links}}
+    </head>
+    
+    <body>
+        <div id="main">
+            {{> header}}
+            <div id="content">
+                <div id="decor">
+                    <img id="shipimage" src="/images/ship.jpg">
+                    <div id="facebook">
+                        <img src="/images/facebook_logo.jpg" height "40px" width="40px" id="facebooklogo">
+                        <a>I am a Facebook Page. Weeeeeee!</a>
+                    </div>
+                </div>
+                <!-- Test Post Divs
+                <div class="post postred">
+                    <div class="postcontent">
+                        <img class="postimage imageleft" src="/images/exampleimage.jpg">
+                        <div class="posttextbox textboxred">
+                            <div class="postTitle">Example text</div>
+                            <div class="posttext">
+                                This is some example text.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="post postbrown">
+                    <div class="postcontent">
+                        <img class="postimage imageright" src="/images/exampleimage.jpg">
+                        <div class="posttextbox textboxbrown">
+                            <div class="postTitle">Example text</div>
+                            <div class="posttext">
+                                This is some example text.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="post postred">
+                    <div class="postcontent">
+                        <div class="posttextbox textboxred">
+                            <div class="postTitle">Example text</div>
+                            <div class="posttext">
+                                This is some example text.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                -->
+            </div>
+            <div id="showmore">
+                <a id="showmorebutton" href="/all">Show More</a>
+            </div>
+            {{> footer}}
+        </div><!--Main-->
+        <script type='text/javascript'>
+
+            GetRecentPosts ();
+
+            function GetRecentPosts () {
+                var maxPosts = 3;
+                var postsGiven = 0;
+                var left;
+                var color;
+                HttpClient.get('/posts', function (data){
+                    posts = JSON.parse(data);
+                    posts.forEach(function (data){
+                        post = JSON.parse(data);
+
+                        if (color == 'red'){
+                            color = 'brown';
+                        }else{
+                            color = 'red';
+                        }
+
+                        if (!(postsGiven > maxPosts)){
+                            //Creates the main block of color for the post
+                            newpost = document.createElement('div');
+                            newpost.className = 'post post'+color;
+                            document.getElementById('content').appendChild(newpost);
+
+                            //Creates the content block inside the main block
+                            contentdiv = document.createElement('div');
+                            contentdiv.className = 'postcontent';
+                            newpost.appendChild(contentdiv);
+
+                            //Checks if the post has an image, and if so adds one to it.
+                            if (!(post.image == 'false')){
+                                image = document.createElement('img');
+                                image.src = post.image;
+                                contentdiv.appendChild(image);
+                                if (left){
+                                    image.className = "postimage imageleft";
+                                    left = false;
+                                }else{
+                                    image.className = "postimage imageright";
+                                    left = true;
+                                }
+                            }
+                            //Creates the white background for the text
+                            whitebackdiv = document.createElement('div');
+                            whitebackdiv.className = ('posttextbox textbox'+color);
+                            contentdiv.appendChild(whitebackdiv);
+
+                            //Creates the title div 
+                            titlediv = document.createElement('div');
+                            titlediv.className = 'postTitle';
+                            titlediv.innerHTML = post.title;
+                            whitebackdiv.appendChild(titlediv);
+
+                            //Creates the content div
+                            contentdiv = document.createElement('div');
+                            contentdiv.innerHTML = post.content;
+                            contentdiv.className = 'posttext';
+                            whitebackdiv.appendChild(contentdiv);
+                        }
+                    })
+                })
+            }
+
+
+            
+
+        </script>
+    </body>
+</html>
