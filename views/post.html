@@ -15,7 +15,6 @@
 				<a class='submit' id='postsubmit'>Post</a>
                 <div class="post postred">
                     <div class="postcontent">
-                        <img class="postimage imageleft" src="/images/exampleimage.jpg">
                         <div class="posttextbox textboxred">
                             <div name="title" class="postTitle"></div>
                             <div name="content" class="posttext"></div>
@@ -26,6 +25,9 @@
 			{{> footer}}
 		</div>
 		<script>
+		 	$("#uploadpicform").bind('ajax:complete', function() {
+		 		window.location.assign('/index');
+   			});
 			function ChangeExample (value){
 
 				if (value=='title'){

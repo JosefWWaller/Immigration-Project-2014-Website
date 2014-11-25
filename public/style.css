@@ -311,7 +311,7 @@ a
 	color : #ffffff;
 	resize : none;
 	overflow : hidden;
-	margin-bottom : 18px;
+	margin-bottom : 22px;
 	border : 0px;
 	box-sizing : border-box;
 }
@@ -595,6 +595,7 @@ a
 	color : #ffffff;
 	font-family : "Arial",sans serif;
 	font-size : 20px;
+	cursor : pointer;
 }
 #adminmenu
 {

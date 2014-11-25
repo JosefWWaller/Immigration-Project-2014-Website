@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<DOCTYPE html>
 	<head>
 		{{> links}}
 	</head>
@@ -6,27 +6,6 @@
 		<div id="main">
 			{{>header}}
 			<div id="content">
-                <div class="allpost postred">
-                    <div class="postcontent">
-                        <img class="postimage imageleft" src="/images/exampleimage.jpg">
-                        <div class="posttextbox textboxred">
-                            <div class="postTitle">Example text</div>
-                            <div class="posttext">
-                                This is some example text.
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="comment postbrown">
-                	<div class="commentuser">
-                		<div class="commentImage"></div>
-                		<div class="commentname">Josef</div><br>
-                		<div class="commentcharacter">Test Account</div>
-                	</div>
-                	<div class="commenttext">
-                	I hate this post and everything it represents
-                	</div>
-                </div>
             </div>
 			{{>footer}}
 		</div><!--Main-->
@@ -42,7 +21,6 @@
 				})
 			}
 			function MakePosts (data){
-				console.log(data);
 				var red;
 				var left;
 				for (i = 0; i < data.length; i++){
@@ -148,7 +126,9 @@
 					newcomment = document.createElement('textarea');
 					if (red){
 						newcomment.className = 'newcomment postbrown';
+						red=false;
 					}else{
+						red=true;
 						newcomment.className = 'newcomment postred';
 					}
 					newcomment.setAttribute('name',i);
@@ -167,31 +147,32 @@
 					submit = document.createElement('a');
 					submit.className = 'submitcom';
 					submit.innerHTML = 'Save';
-					submit.setAttribute('onClick','SendComment('+i+')')
-					submit.setAttribute('href','#');
+					submit.setAttribute('onClick','SendComment('+i+')');
 					background.appendChild(submit);
 					if (!post.comments){
-						red=!red;
 						left=!left;
 					}
 				}
 			}
 			function SendComment (i) {
-				console.log(i);
 				content = document.getElementsByClassName('newcomment')[i].value;
 				post = document.getElementById(i);
 				file = post.getAttribute('name');
 				object = {"file":file,"content":content};
-				console.log(object);
 				toSend = JSON.stringify(object);
 				$.ajax({
 					type:"POST",
 					url:"/newcomment",
 					data: toSend,
-					dataType: "json",
 					contentType: "application/json",
+					dataType: "string",
 					success: function (file){
-						
+						if (file=='login'){
+							textarea = document.getElementsByName(i)[0];
+							textarea.style.border = "2px solid #ffffff";
+							textarea.placeholder = 'Need to be logged in';
+							textarea.value = '';
+						}
 					}
 				})
 			}

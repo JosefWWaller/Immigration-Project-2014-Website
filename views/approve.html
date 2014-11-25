@@ -38,7 +38,7 @@
 							approvebut.className = "approvesub";
 							approvebut.innerHTML = "Approve";
 							parentdiv.appendChild(approvebut);
-							approvebut.setAttribute('href','');
+							approvebut.setAttribute('href','#');
 							approvebut.id = i;
 							user = (JSON.stringify(user.file));
 							approvebut.setAttribute('onClick','ApproveAccount('+user+','+i+')');
@@ -47,7 +47,6 @@
 				})
 			}
 			function ApproveAccount (file,i){
-				console.log("ASDF");
 				object = {"file":file,"i":i}
 				toSend = JSON.stringify(object);
 				$.ajax({

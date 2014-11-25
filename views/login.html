@@ -20,8 +20,8 @@
 								<div class='required' id='passreq'>Required</div>
 							</div>
 							<div id='textareabox'>
-								<textarea class='fieldtextarea logintextarea' id='user' onkeypress="CheckForEnter('pass')"></textarea>
-								<textarea class='fieldtextarea logintextarea' id='pass' onkeypress="CheckForEnter('loginsubmit')"></textarea>
+								<input class='fieldtextarea logintextarea' id='user' onkeypress="CheckForEnter('pass')">
+								<input class='fieldtextarea logintextarea' type='password' id='pass' onkeypress="CheckForEnter('loginsubmit')">
 							</div>
 						</div>
 						<a id='loginsubmit' class='submit'>Sign In</a>
@@ -46,11 +46,11 @@
 								<div class='required' id='picreq'>Required</div>
 							</div>
 							<div id='textareabox'>
-								<textarea id='name' class='fieldtextarea registertextarea' onkeypress="CheckForEnter('character')"></textarea>
-								<textarea id='character'class='fieldtextarea registertextarea' onkeypress="CheckForEnter('newuser')"></textarea>
-								<textarea id='newuser' class='fieldtextarea registertextarea' onkeypress="CheckForEnter('newpass')"></textarea>
-								<textarea id='newpass' class='fieldtextarea registertextarea' onkeypress="CheckForEnter('code')"></textarea>
-								<textarea id='code' class='fieldtextarea registertextarea' onkeypress="CheckForEnter('submit')"></textarea>
+								<input id='name' class='fieldtextarea registertextarea' onkeypress="CheckForEnter('character')">
+								<input id='character'class='fieldtextarea registertextarea' onkeypress="CheckForEnter('newuser')">
+								<input id='newuser' class='fieldtextarea registertextarea' onkeypress="CheckForEnter('newpass')">
+								<input id='newpass' type='password' class='fieldtextarea registertextarea' onkeypress="CheckForEnter('code')">
+								<input id='code' class='fieldtextarea registertextarea' onkeypress="CheckForEnter('submit')">
 
 							</div>
 							<form action='/userpic' id='uploadpicform' enctype="multipart/form-data" method="post">
