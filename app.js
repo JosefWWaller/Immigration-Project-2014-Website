@@ -6,6 +6,13 @@ var express = require("express"),
     qt   = require('quickthumb');
     http = require('http');
 
+var mongoose = require('mongoose');
+var uristring =
+	process.env.MONGOLAB_URI ||
+	process.env.MONGOHQ_URL ||
+	'mongodb://localhost/immigrationproject';
+mongoose.connect(uristring);
+
 // Use quickthumb
 app.use(qt.static(__dirname + '/'));
 
@@ -20,7 +27,21 @@ var session = require('cookie-session');
 app.use(bodyParser.json({
   extended: true
 }));
-//Require Stuff
+
+// Models
+var Post = mongoose.model('Post', {
+	title: String,
+	content: String,
+	date: Date,
+	image: String
+});
+var Comment = mongoose.model('Comment', {
+	user: String,
+	character: String,
+	content: String,
+	image: String,
+	post_id: mongoose.Schema.Types.ObjectId
+});
 
 var partialsDir = __dirname + '/views/partials/';
  
@@ -87,14 +108,8 @@ app.get('/approve', function (req,res){
 
 //Functions
 app.get('/posts', function (req,res){
-	fs.readdir('posts', function (err,data){
+	Post.find(function (err, posts){
 		if (err) throw err;
-		posts = [];
-		data.forEach(function (file){
-			content = fs.readFileSync('posts/'+file,{encoding: 'utf8'});
-			toPush = content;
-			posts.push(toPush);
-		})
 		toSend = JSON.stringify(posts);
 		res.send(toSend);
 	})
@@ -219,11 +234,22 @@ app.post('/userpic', function (req, res){
 })
 
 app.post('/newpost', function (req,res){
-	received = {"title":req.body.title,"date":req.body.date,"content":req.body.content,"image":req.body.image,"comments":false};
-	toSave = JSON.stringify(received);
-	backUnixTime = 1000000000000000-(new Date).getTime();
-	fs.writeFileSync('posts/'+backUnixTime+'.json',toSave,'utf8');
-	res.send('Received');
+	received = {
+		"title":req.body.title,
+		"date":req.body.date,
+		"content":req.body.content,
+		"image":req.body.image
+	};
+
+	Post.create(received, function (err, post) {
+		if (err) throw err;
+		res.send('Received');
+	});
+	// Post.find(function (err, posts) {
+	// 	posts.forEach(function (post) {
+	// 		console.log("Got " + post);
+	// 	})
+	// });
 })
 
 app.post('/register', function (req,res){

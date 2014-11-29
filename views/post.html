@@ -64,7 +64,10 @@
 					type: 'POST',
 					url: '/newpost',
 					data: toSend,
-					contentType: 'application/json'
+					contentType: 'application/json',
+					success : function (data){
+						window.location.assign('/index');
+					}
 				})
 			}
 			$('#postsubmit').click(SendPosts);

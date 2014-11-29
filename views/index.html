@@ -65,8 +65,7 @@
                 var color;
                 HttpClient.get('/posts', function (data){
                     posts = JSON.parse(data);
-                    posts.forEach(function (data){
-                        post = JSON.parse(data);
+                    posts.forEach(function (post){
 
                         if (color == 'red'){
                             color = 'brown';
