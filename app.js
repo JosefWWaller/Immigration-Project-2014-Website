@@ -15,7 +15,6 @@ var hbs = require ('hbs');
 
 var bodyParser = require('body-parser');
 var session = require('cookie-session');
-var easyimg = require('easyimage');
 
 
 app.use(bodyParser.json({
