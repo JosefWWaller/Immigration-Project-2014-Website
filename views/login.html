@@ -55,10 +55,8 @@
 							</div>
 							<form action='/userpic' id='uploadpicform' enctype="multipart/form-data" method="post">
 								<input type="file" id='pic' name="upload" multiple="multiple" accept="image/*"><br>
+								<input type="hidden" name="user_id" id="user_id">
 							</form>
-							<!--<form action='/userpic' id='uploadpicform' enctype="multipart/form-data" method="post">
-								<input type="file" name="upload" multiple="multiple" accept="image/*">
-							</form>-->
 						</div>
 						<div class="submitbox">
 							<a id='registersubmit' class='submit'>Sign Up</a>
@@ -122,7 +120,7 @@
 							filename = filename.substring(1);
 						}
 					}
-					info = {'name':name,'character':character,'username':username,'password':password,'image':'public/images/userpics/'+filename,'code':code}
+					info = {'name':name,'character':character,'username':username,'password':password,'image':filename,'code':code}
 					console.log(info);
 					toSend = JSON.stringify(info);
 
@@ -165,7 +163,8 @@
 					}
 				}
 				if (!error){
-					document.getElementById('uploadpicform').submit();
+					document.getElementById('user_id').value = data.user_id;
+					//document.getElementById('uploadpicform').submit();
 				}
 			}
 			function CheckUserInfo () {

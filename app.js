@@ -7,11 +7,14 @@ var express = require("express"),
     http = require('http');
 
 var mongoose = require('mongoose');
+var async = require('async');
 var uristring =
 	process.env.MONGOLAB_URI ||
 	process.env.MONGOHQ_URL ||
 	'mongodb://localhost/immigrationproject';
-mongoose.connect(uristring);
+mongoose.connect(uristring, function (err){
+	if (err) throw err;
+});
 var grid = require('gridfs-stream');
 var gridfs = grid(mongoose.connection.db, mongoose.mongo);
 
@@ -43,6 +46,14 @@ var Comment = mongoose.model('Comment', {
 	content: String,
 	image: String,
 	post_id: mongoose.Schema.Types.ObjectId
+});
+var UserInfo = mongoose.model('UserInfo', {
+	name : String,
+	character : String,
+	username : String,
+	password : String,
+	approved : Boolean,
+	admin : Boolean
 });
 
 // Read partials from partials folder and add them to handlebars
@@ -113,41 +124,75 @@ app.get('/approve', function (req,res){
 app.get('/posts', function (req,res){
 	Post.find().sort('-date').limit(5).exec(function (err, posts){
 		if (err) throw err;
+		console.log(posts)
 		toSend = JSON.stringify(posts);
 		res.send(toSend);
+	})
+})
+app.get('/allposts', function (req,res){
+	Post.find().sort('-date').limit(20).exec(function (err, posts){
+		allFunc = [];
+		posts.forEach(function (post) {
+
+			var postId = post._id;
+			commentsFunction = function (callback) {
+				Comment.find({ "post_id": postId }).exec(function (err, data){
+					if (err) {
+						callback(err, null);
+					} else {
+						postObject = {
+							"post": post,
+							"comments": data
+						};
+						callback(null, postObject);
+					}
+				})
+			}
+			allFunc.push(commentsFunction);
+		})
+		console.log("callbacks " + allFunc.length)
+		async.parallel(allFunc, function (err, datas) {
+			console.log("datas is "+datas);
+			toSend = JSON.stringify(datas);
+			res.send(toSend);
+		});
 	})
 })
 app.post('/newcomment', function (req,res){
 	if (!req.session.loggedin){
 		res.send('login');
 	}else{
-		console.log(req);
-		received = {"file":req.body.file,"content":req.body.content};
-		read = fs.readFileSync('posts/'+received.file,{encoding: 'utf8'});
-		post = JSON.parse(read);
-		object = {"user":req.session.name,"character":req.session.character,"content":received.content,"image":req.session.image}
-		comments = post.comments
-		if (comments == false){
-			comments = [];
+		received = {
+			"post_id":req.body.id,
+			"content":req.body.content
+		};
+		console.log(received);
+		object = {
+			"user":req.session.name,
+			"character":req.session.character,
+			"content":received.content,
+			"image":req.session.image,
+			"post_id":received.post_id
 		}
-		comments.push(object);
-		toSave = {"title":post.title,"date":post.date,"content":post.content,"image":post.image,"comments":comments}
-		stringToSave = JSON.stringify(toSave);
-		fs.writeFileSync('posts/'+received.file, stringToSave, 'utf8');
+		//console.log(object);
+		Comment.create(object, function (err, post) {
+			if (err) throw err;
+			res.send(JSON.stringify(object));
+		});
+		Comment.find().exec(function (err,comments){
+			console.log(comments);
+		})
 	}
 })
 
 app.get('/tba',function (req,res){
-	fs.readdir ('userinfo', function (err,data){
+	UserInfo.find().exec(function (err,users){
 		if (err) throw err;
 		toSend = [];
-		data.forEach(function (file){
-			read = fs.readFileSync('userinfo/'+file, {encoding: 'utf8'});
-			user = JSON.parse(read);
+		users.forEach(function (userInfo){
+			user = userInfo;
 			if (!user.approved){
-				user.file = file;
-				toPush = JSON.stringify(user);
-				toSend.push(toPush);
+				toSend.push(user);
 			}
 		})
 		stringToSend = JSON.stringify(toSend);
@@ -156,17 +201,12 @@ app.get('/tba',function (req,res){
 })
 app.post('/approveaccount', function (req,res){
 	i = req.body.i;
-	recFile = req.body.file;
-	fs.readdir('userinfo', function (err,data){
+	recId = req.body.file;
+	UserInfo.find(recId).exec(function (err,users){
 		if (err) throw err;
-		data.forEach(function (file){
-			if (file==recFile){
-				read = fs.readFileSync('userinfo/'+file,{encoding:'utf8'});
-				userinfo = JSON.parse(read);
-				userinfo.approved = true;
-				toSave = JSON.stringify(userinfo);
-				fs.writeFileSync('userinfo/'+file,toSave,'utf8');
-			}
+		users.forEach(function (user){
+			var conditions = {_id:recId}
+				,update = {$inc: {approved:true}}
 		})
 		res.send("Received");
 	})
@@ -228,29 +268,31 @@ function Resize () {
 }
 
 app.post('/userpic', function (req, res){
-	
-	var form = new formidable.IncomingForm();
-	form.parse(req, function(err, fields, files) {
-    // res.writeHead(200, {'content-type': 'text/plain'});
-    // res.end(util.inspect({fields: fields, files: files}));
-	});
+  var form = new formidable.IncomingForm();
+  form.parse(req, function(err, fields, files) {
 
-	form.on('end', function(fields, files) {
     /* Temporary location of our uploaded file */
-    var temp_path = this.openedFiles[0].path;
+    var temp_path = files['upload'].path;
     /* The file name of the uploaded file */
-    var file_name = this.openedFiles[0].name;
-    /* Location where we want to copy the uploaded file */
-    var new_location = 'public/images/userpics/';
+    var file_name = files['upload'].name;
 
-    fs.copy(temp_path, new_location + file_name, function(err) {  
-      if (err) {
-        console.error(err);
-      } else {
-        //Resize();
-        res.redirect('/index');
-      }
+    var userId = fields['user_id'];
+    console.log("ID is " + userId);
+    UserInfo.findById(userId, function (err, users) {
+    	if (err) throw err;
+
+	    var filename = 'post_image_' + file_name;
+	    var writestream = gridfs.createWriteStream({ filename: filename });
+	    writestream.on('close', function (file) {
+	    	// Set the image property on the post
+	    	users.image = filename;
+	    	users.save(function (err) {
+		    	res.redirect('/index');
+	    	});
+	    });
+	    fs.createReadStream(temp_path).pipe(writestream);
     });
+
   });
 })
 
@@ -276,15 +318,13 @@ app.post('/newpost', function (req,res){
 app.post('/register', function (req,res){
 	newAccount = {'name':req.body.name, 'character':req.body.character,'username':req.body.username,'password':req.body.password,'image':req.body.image,'approved':false,'admin':req.body.code};
 	toReturn = {};
-	fs.readdir('userinfo',function (err,data){
+	UserInfo.find().exec(function (err,data){
 		if (err) throw err;
 		toReturn.name = true;
 		toReturn.character = true;
 		toReturn.password = true;
 		toReturn.username = true;
-		data.forEach(function (file){
-			read = fs.readFileSync('userinfo/'+file,{encoding: 'utf8'});
-			account = JSON.parse(read);
+		data.forEach(function (account){
 			if (account.name == newAccount.name){
 				toReturn.name = false;
 			}
@@ -312,23 +352,23 @@ app.post('/register', function (req,res){
 			}else{
 				newAccount.admin=false;
 			}
-			toSave = JSON.stringify(newAccount);
-			unixTime = (new Date).getTime();
-			fs.writeFileSync('userinfo/'+unixTime+'.json', toSave, 'utf8');
-			console.log(req.session.loggedin);
+			UserInfo.create(newAccount, function (err, user) {
+				if (err) throw err;
+				toReturn.user_id = user._id;
+				res.send(JSON.stringify(toReturn));
+			})
+		} else {
+			res.send(toSend);
 		}
-		res.send(toSend);
 	})
 })
 
 app.post('/checkuser', function (req,res){
 	received = {'username':req.body.username,'password':req.body.password}
 	responce = 'false';
-	fs.readdir('userinfo',function (err,data){
+	UserInfo.find().exec(function (err,users){
 		if (err) throw err;
-		data.forEach(function(file){
-			read = fs.readFileSync('userinfo/'+file,{encoding: 'utf8'});
-			account = JSON.parse(read);
+		users.forEach(function(account){
 
 			if (account.username == received.username && account.password == received.password){
 				if (account.approved){
@@ -340,7 +380,6 @@ app.post('/checkuser', function (req,res){
 					req.session.username = account.username;
 					req.session.character = account.character;
 					req.session.image = account.image;
-					console.log("Image : "+req.session.image+" with file "+file);
 					req.session.name = account.name;
 				}else{
 					responce = 'notappr';
@@ -365,32 +404,6 @@ app.get('/headeruser', function (req,res){
 	}else{
 		res.send({'name':'false'});
 	}
-})
-app.get('/allposts', function (req,res){
-	fs.readdir('posts', function (err,data){
-		console.log(data);
-		toSend = [];
-		data.forEach(function (file){
-			read = fs.readFileSync('posts/'+file,{encoding: 'utf8'});
-			post = JSON.parse(read);
-			if (post.comments){
-				comments = [];
-				post.comments.forEach(function (file){
-					comments.push(file);
-				})
-			}else{
-				comments = false;
-			}
-			stringcom = JSON.stringify(comments);
-			if (post.comments){
-				object = {'file':file,'title':post.title,'date':post.date,'content':post.content,'image':post.image,'comments':stringcom};
-			}else{
-				object = {'file':file,'title':post.title,'date':post.date,'content':post.content,'image':post.image,};
-			}
-			toSend.push(JSON.stringify(object));
-		})
-		res.send(toSend);	
-	})
 })
 
 //Checks for the browser closed

@@ -1,4 +1,5 @@
-<DOCTYPE html>
+<!DOCTYPE html>
+<html>
 	<head>
 		{{> links}}
 	</head>
@@ -16,16 +17,19 @@
 					type: "GET",
 					url: "/allposts",
 					success: function (data){
-						MakePosts(data);
+						posts = JSON.parse(data);
+						MakePosts(posts);
 					}
 				})
 			}
 			function MakePosts (data){
+				console.log(data);
 				var red;
 				var left;
 				for (i = 0; i < data.length; i++){
 
-					post = JSON.parse(data[i]);
+					post = data[i].post;
+					console.log(post);
 					//Parent Div
 					parentdiv = document.createElement('div');
 					if (red){
@@ -33,7 +37,7 @@
 					}else{
 						parentdiv.className = 'allpost postred';
 					}
-					parentdiv.setAttribute('name',post.file);
+					parentdiv.setAttribute('name',post._id);
 					parentdiv.id = i;
 					document.getElementById('content').appendChild(parentdiv);
 
@@ -76,9 +80,11 @@
 					text.innerHTML = post.content;
 					red = !red;
 
-					if (!post.comments == false){
-						comments = JSON.parse(post.comments);
+					if (!data[i].comments == false){
+						comments = data[i].comments;
+						console.log(comments);
 						for (x=0;x<comments.length;x++){
+							console.log("ASDF");
 
 							comment = comments[x];
 
@@ -139,9 +145,9 @@
 					background = document.createElement('div');
 					document.getElementById('content').appendChild(background);
 					if(red){
-						background.className = 'commentbackground postbrown';
-					}else{
 						background.className = 'commentbackground postred';
+					}else{
+						background.className = 'commentbackground postbrown';
 					}
 					//Submit 
 					submit = document.createElement('a');
@@ -157,22 +163,27 @@
 			function SendComment (i) {
 				content = document.getElementsByClassName('newcomment')[i].value;
 				post = document.getElementById(i);
-				file = post.getAttribute('name');
-				object = {"file":file,"content":content};
+				id = post.getAttribute('name');
+				object = {"id":id,"content":content};
+				console.log(object);
 				toSend = JSON.stringify(object);
 				$.ajax({
 					type:"POST",
 					url:"/newcomment",
 					data: toSend,
 					contentType: "application/json",
-					dataType: "string",
 					success: function (file){
 						if (file=='login'){
 							textarea = document.getElementsByName(i)[0];
 							textarea.style.border = "2px solid #ffffff";
 							textarea.placeholder = 'Need to be logged in';
 							textarea.value = '';
+						}else{
+							window.location.assign('/all');
 						}
+					},
+					error : function (err,param){
+						console.log(param);
 					}
 				})
 			}
