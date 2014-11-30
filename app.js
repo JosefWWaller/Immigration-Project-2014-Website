@@ -12,6 +12,8 @@ var uristring =
 	process.env.MONGOHQ_URL ||
 	'mongodb://localhost/immigrationproject';
 mongoose.connect(uristring);
+var grid = require('gridfs-stream');
+var gridfs = grid(mongoose.connection.db, mongoose.mongo);
 
 // Use quickthumb
 app.use(qt.static(__dirname + '/'));
@@ -43,6 +45,7 @@ var Comment = mongoose.model('Comment', {
 	post_id: mongoose.Schema.Types.ObjectId
 });
 
+// Read partials from partials folder and add them to handlebars
 var partialsDir = __dirname + '/views/partials/';
  
 var filenames = fs.readdirSync(partialsDir);
@@ -108,7 +111,7 @@ app.get('/approve', function (req,res){
 
 //Functions
 app.get('/posts', function (req,res){
-	Post.find(function (err, posts){
+	Post.find().sort('-date').limit(5).exec(function (err, posts){
 		if (err) throw err;
 		toSend = JSON.stringify(posts);
 		res.send(toSend);
@@ -169,28 +172,46 @@ app.post('/approveaccount', function (req,res){
 	})
 })
 
+app.get('/db_images/:name', function (req, res) {
+	var readstream = gridfs.createReadStream({
+	  filename: req.params.name
+	});
+
+	readstream.on('error', function (err) {
+	  res.sendStatus(404);
+	  res.end();
+	});
+
+	readstream.pipe(res);
+});
+
 app.post('/postpic', function (req,res){
   var form = new formidable.IncomingForm();
   form.parse(req, function(err, fields, files) {
-    // res.writeHead(200, {'content-type': 'text/plain'});
-    // res.end(util.inspect({fields: fields, files: files}));
-  });
 
-  form.on('end', function(fields, files) {
     /* Temporary location of our uploaded file */
-    var temp_path = this.openedFiles[0].path;
+    var temp_path = files['upload'].path;
     /* The file name of the uploaded file */
-    var file_name = this.openedFiles[0].name;
-    /* Location where we want to copy the uploaded file */
-    var new_location = 'public/images/';
+    var file_name = files['upload'].name;
 
-    fs.copy(temp_path, new_location + file_name, function(err) {  
-      if (err) {
-        console.error(err);
-      } else {
-        res.redirect('/index');
-      }
+    var postId = fields['post_id'];
+    console.log("ID is " + postId);
+    Post.findById(postId, function (err, post) {
+    	if (err) throw err;
+
+    	console.log(post);
+	    var filename = 'post_image_' + file_name;
+	    var writestream = gridfs.createWriteStream({ filename: filename });
+	    writestream.on('close', function (file) {
+	    	// Set the image property on the post
+	    	post.image = filename;
+	    	post.save(function (err) {
+		    	res.redirect('/index');
+	    	});
+	    });
+	    fs.createReadStream(temp_path).pipe(writestream);
     });
+
   });
 })
 function Resize () {
@@ -243,7 +264,7 @@ app.post('/newpost', function (req,res){
 
 	Post.create(received, function (err, post) {
 		if (err) throw err;
-		res.send('Received');
+		res.send(post._id);
 	});
 	// Post.find(function (err, posts) {
 	// 	posts.forEach(function (post) {

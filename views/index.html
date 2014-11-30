@@ -87,7 +87,7 @@
                             //Checks if the post has an image, and if so adds one to it.
                             if (!(post.image == 'false')){
                                 image = document.createElement('img');
-                                image.src = post.image;
+                                image.src = "/db_images/" + post.image;
                                 contentdiv.appendChild(image);
                                 if (left){
                                     image.className = "postimage imageleft";

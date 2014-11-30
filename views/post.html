@@ -11,6 +11,7 @@
 				<textarea id="newpostcontent" onkeyup="ChangeExample('content')"></textarea>
 				<form action='/postpic' id='uploadpicform' enctype="multipart/form-data" method="post">
 					<input type="file" id='pic' name="upload" multiple="multiple" accept="image/*"><br>
+					<input type="hidden" name="post_id" id="post_id">
 				</form>
 				<a class='submit' id='postsubmit'>Post</a>
                 <div class="post postred">
@@ -59,14 +60,15 @@
 				object = {'title':postTitle,'date':postDate,'content':postContent,'image':image};
 				console.log(object.content)
 				toSend = JSON.stringify(object);
-				document.getElementById('uploadpicform').submit();
 				$.ajax({
 					type: 'POST',
 					url: '/newpost',
 					data: toSend,
 					contentType: 'application/json',
-					success : function (data){
-						window.location.assign('/index');
+					success : function (data) {
+						console.log("The ID of the new post is: " + data);
+						document.getElementById("post_id").value = data;
+						document.getElementById('uploadpicform').submit();
 					}
 				})
 			}
