@@ -144,6 +144,8 @@ app.get('/allposts', function (req,res){
 							"post": post,
 							"comments": data
 						};
+						// console.log(" Dta IS "+data)
+						console.log("Commentsare "+postObject.comments)
 						callback(null, postObject);
 					}
 				})
@@ -152,7 +154,7 @@ app.get('/allposts', function (req,res){
 		})
 		console.log("callbacks " + allFunc.length)
 		async.parallel(allFunc, function (err, datas) {
-			console.log("datas is "+datas);
+			console.log('Datas is '+datas)
 			toSend = JSON.stringify(datas);
 			res.send(toSend);
 		});
@@ -186,16 +188,9 @@ app.post('/newcomment', function (req,res){
 })
 
 app.get('/tba',function (req,res){
-	UserInfo.find().exec(function (err,users){
+	UserInfo.find({ approved: false }).exec(function (err,users){
 		if (err) throw err;
-		toSend = [];
-		users.forEach(function (userInfo){
-			user = userInfo;
-			if (!user.approved){
-				toSend.push(user);
-			}
-		})
-		stringToSend = JSON.stringify(toSend);
+		stringToSend = JSON.stringify(users);
 		res.send(stringToSend);
 	})
 })
@@ -254,19 +249,6 @@ app.post('/postpic', function (req,res){
 
   });
 })
-function Resize () {
-	require('lwip').open('public/images/exampleimage.jpg', function (err,data){
-    	if (err) throw err;
-    	image.batch()
-    	.scale(80,function (err,image){
-    		if (err) throw err;
-    	})
-    	.writeFile('public/image/asdf.jpg', function (err){
-
-    	})
-    })
-}
-
 app.post('/userpic', function (req, res){
   var form = new formidable.IncomingForm();
   form.parse(req, function(err, fields, files) {
@@ -278,15 +260,16 @@ app.post('/userpic', function (req, res){
 
     var userId = fields['user_id'];
     console.log("ID is " + userId);
-    UserInfo.findById(userId, function (err, users) {
+    UserInfo.findById(userId, function (err, user) {
     	if (err) throw err;
 
-	    var filename = 'post_image_' + file_name;
+	    var filename = 'user_image_' + file_name;
 	    var writestream = gridfs.createWriteStream({ filename: filename });
 	    writestream.on('close', function (file) {
 	    	// Set the image property on the post
-	    	users.image = filename;
-	    	users.save(function (err) {
+	    	user.image = filename;
+	    	user.save(function (err) {
+	    		console.log(users);
 		    	res.redirect('/index');
 	    	});
 	    });
@@ -375,6 +358,7 @@ app.post('/checkuser', function (req,res){
 					if (account.admin == true){
 						req.session.admin = true;
 					}
+					console.log(account);
 					responce = true;
 					req.session.loggedin = true;
 					req.session.username = account.username;

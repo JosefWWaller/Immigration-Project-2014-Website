@@ -18,6 +18,7 @@
 					url: "/allposts",
 					success: function (data){
 						posts = JSON.parse(data);
+						console.log(posts);
 						MakePosts(posts);
 					}
 				})
@@ -29,6 +30,7 @@
 				for (i = 0; i < data.length; i++){
 
 					post = data[i].post;
+					console.log("DAAT "+data[1].comments)
 					console.log(post);
 					//Parent Div
 					parentdiv = document.createElement('div');
@@ -54,7 +56,7 @@
 						}else{
 							image.className = 'postimage imageright'
 						}
-						image.src = post.image;
+						image.src = '/db_images/'+post.image;
 						postcondiv.appendChild(image);
 					}
 
@@ -82,11 +84,9 @@
 
 					if (!data[i].comments == false){
 						comments = data[i].comments;
-						console.log(comments);
 						for (x=0;x<comments.length;x++){
-							console.log("ASDF");
-
 							comment = comments[x];
+							console.log("Processing comment ", comment);
 
 							//Parent Comment Div
 							commentParent = document.createElement('div');
@@ -106,7 +106,8 @@
 							commentimg = document.createElement('img');
 							commentimg.className = 'commentImage';
 							commentUser.appendChild(commentimg);
-							commentimg.src = comments.image;
+							commentimg.src = '/db_images/'+comment.image;
+							console.log(comment.image);
 
 							//Comment User name div
 							commentName = document.createElement('div');
