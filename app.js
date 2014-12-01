@@ -337,6 +337,7 @@ app.post('/register', function (req,res){
 				newAccount.approved = true;
 				req.session.username = newAccount.username;
 				req.session.name = newAccount.name;
+				req.session.image = newAccount.image;
 				req.session.character = newAccount.character;
 				req.session.loggedin = true;
 				console.log(req.session.loggedin);
