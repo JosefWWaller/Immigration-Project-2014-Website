@@ -300,7 +300,15 @@ app.post('/newpost', function (req,res){
 })
 
 app.post('/register', function (req,res){
-	newAccount = {'name':req.body.name, 'character':req.body.character,'username':req.body.username,'password':req.body.password,'image':req.body.image,'approved':false,'admin':req.body.code};
+	newAccount = {
+		'name':req.body.name, 
+		'character':req.body.character,
+		'username':req.body.username,
+		'password':req.body.password,
+		'image':req.body.image,
+		'approved':false,
+		'admin':req.body.code
+	};
 	toReturn = {};
 	UserInfo.find().exec(function (err,data){
 		if (err) throw err;
@@ -348,7 +356,9 @@ app.post('/register', function (req,res){
 })
 
 app.post('/checkuser', function (req,res){
-	received = {'username':req.body.username,'password':req.body.password}
+	received = {'username':req.body.username,
+	'password':req.body.password
+	}
 	responce = 'false';
 	UserInfo.find().exec(function (err,users){
 		if (err) throw err;
@@ -378,11 +388,16 @@ app.get('/headeruser', function (req,res){
 	console.log(req.session.loggedin);
 	if (req.session.loggedin){
 		if (req.session.admin){
-			object = {"name":req.session.name,"admin":'true'}
+			object = {
+				"name":req.session.name,
+				"admin":'true'
+			}
 			toSend = JSON.stringify(object);
 			res.send(toSend);
 		}else{
-			object = {"name":req.session.name}
+			object = {
+				"name":req.session.name
+			}
 			toSend = JSON.stringify(object);
 			res.send(toSend);
 		}
