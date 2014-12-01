@@ -196,15 +196,14 @@ app.get('/tba',function (req,res){
 	})
 })
 app.post('/approveaccount', function (req,res){
-	i = req.body.i;
-	recId = req.body.file;
-	UserInfo.find(recId).exec(function (err,users){
+	userId = req.body.file;
+	UserInfo.findById(userId, function (err, user) {
 		if (err) throw err;
-		users.forEach(function (user){
-			var conditions = {_id:recId}
-				,update = {$inc: {approved:true}}
-		})
-		res.send("Received");
+		user.approved = true;
+		user.save(function (err) {
+			if (err) throw err;
+			res.send("Received");
+		});
 	})
 })
 
@@ -301,7 +300,7 @@ app.post('/newpost', function (req,res){
 
 app.post('/register', function (req,res){
 	newAccount = {
-		'name':req.body.name, 
+		'name':req.body.name,
 		'character':req.body.character,
 		'username':req.body.username,
 		'password':req.body.password,

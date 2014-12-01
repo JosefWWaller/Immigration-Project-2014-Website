@@ -2,7 +2,7 @@ body
 {
 	background-color : #d6e9e9;
 }
-#main 
+#main
 {
 	width: 1500px;
 	background-color: #929292;
@@ -32,7 +32,7 @@ body
 #title
 {
 	font-size : 35px;
-	font-family : "Microsoft New Tai Lue", sans Serif;
+	font-family : "Microsoft New Tai Lue", sans-serif;
 	color : #ffffff;
 }
 #title:hover
