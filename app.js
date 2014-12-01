@@ -52,15 +52,16 @@ var UserInfo = mongoose.model('UserInfo', {
 	character : String,
 	username : String,
 	password : String,
+	image : String,
 	approved : Boolean,
 	admin : Boolean
 });
 
 // Read partials from partials folder and add them to handlebars
 var partialsDir = __dirname + '/views/partials/';
- 
+
 var filenames = fs.readdirSync(partialsDir);
- 
+
 filenames.forEach(function (filename) {
   var matches = /^([^.]+).hbs$/.exec(filename);
   if (!matches) {
@@ -269,7 +270,7 @@ app.post('/userpic', function (req, res){
 	    	// Set the image property on the post
 	    	user.image = filename;
 	    	user.save(function (err) {
-	    		console.log(users);
+	    		console.log(user);
 		    	res.redirect('/index');
 	    	});
 	    });
@@ -367,7 +368,7 @@ app.post('/checkuser', function (req,res){
 					req.session.name = account.name;
 				}else{
 					responce = 'notappr';
-				}	
+				}
 			}
 		})
 		res.send(responce);
@@ -391,11 +392,11 @@ app.get('/headeruser', function (req,res){
 })
 
 //Checks for the browser closed
-//by waiting for a responce that 
+//by waiting for a responce that
 //is sent by the client every 5
-//seconds. If the message is 
+//seconds. If the message is
 //recieved over 30 seconds since
-//the last, the req.session is 
+//the last, the req.session is
 //restarted
 app.post('/check', function (req,res){
 
