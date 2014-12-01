@@ -235,7 +235,7 @@ app.post('/postpic', function (req,res){
     	if (err) throw err;
 
     	console.log(post);
-	    var filename = 'post_image_' + file_name;
+	    var filename = 'post_image_' + require('randomstring').generate();
 	    var writestream = gridfs.createWriteStream({ filename: filename });
 	    writestream.on('close', function (file) {
 	    	// Set the image property on the post
@@ -263,7 +263,7 @@ app.post('/userpic', function (req, res){
     UserInfo.findById(userId, function (err, user) {
     	if (err) throw err;
 
-	    var filename = 'user_image_' + file_name;
+	    var filename = 'user_image_' + require('randomstring').generate();
 	    var writestream = gridfs.createWriteStream({ filename: filename });
 	    writestream.on('close', function (file) {
 	    	// Set the image property on the post
