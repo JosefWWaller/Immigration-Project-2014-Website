@@ -54,7 +54,8 @@
 				if (document.getElementById('pic').value==''){
 					image='false';
 				}else{
-					image = 'public/images/'+filename;
+					console.log("Pic is "+document.getElementById('pic').value);
+					image = filename;
 				}
 				object = {'title':postTitle,'date':postDate,'content':postContent,'image':image};
 				console.log(object.content)
@@ -67,7 +68,13 @@
 					success : function (data) {
 						console.log("The ID of the new post is: " + data);
 						document.getElementById("post_id").value = data;
-						document.getElementById('uploadpicform').submit();
+						if (!(object.image==false)){
+							document.getElementById('uploadpicform').submit();
+							//console.log('not false');
+						}else{
+							window.location.assign('/index');
+							//console.log(object.image);
+						}
 					}
 				})
 			}

@@ -223,6 +223,7 @@ app.get('/db_images/:name', function (req, res) {
 app.post('/postpic', function (req,res){
   var form = new formidable.IncomingForm();
   form.parse(req, function(err, fields, files) {
+  console.log("FORM IS "+fields)
 
     /* Temporary location of our uploaded file */
     var temp_path = files['upload'].path;
@@ -286,7 +287,7 @@ app.post('/newpost', function (req,res){
 		"content":req.body.content,
 		"image":req.body.image
 	};
-
+	console.log(received.image);
 	Post.create(received, function (err, post) {
 		if (err) throw err;
 		res.send(post._id);

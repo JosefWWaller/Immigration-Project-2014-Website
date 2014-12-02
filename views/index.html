@@ -84,7 +84,8 @@
                         newpost.appendChild(contentdiv);
 
                         //Checks if the post has an image, and if so adds one to it.
-                        if (!(post.image == 'false')){
+                        if (!(post.image == false)){
+                            console.log(post.image);
                             image = document.createElement('img');
                             image.src = "/db_images/" + post.image;
                             contentdiv.appendChild(image);
@@ -95,6 +96,7 @@
                                 image.className = "postimage imageright";
                                 left = true;
                             }
+                        }
                             //Creates the white background for the text
                             whitebackdiv = document.createElement('div');
                             whitebackdiv.className = ('posttextbox textbox'+color);
@@ -111,7 +113,6 @@
                             contentdiv.innerHTML = post.content;
                             contentdiv.className = 'posttext';
                             whitebackdiv.appendChild(contentdiv);
-                        }
                     })
                 })
             }
