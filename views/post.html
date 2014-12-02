@@ -68,12 +68,12 @@
 					success : function (data) {
 						console.log("The ID of the new post is: " + data);
 						document.getElementById("post_id").value = data;
-						if (!(object.image==false)){
-							document.getElementById('uploadpicform').submit();
-							//console.log('not false');
+						if (!(object.image=='false')){
+							//document.getElementById('uploadpicform').submit();
+							console.log('not false');
 						}else{
 							window.location.assign('/index');
-							//console.log(object.image);
+							console.log(object.image);
 						}
 					}
 				})
