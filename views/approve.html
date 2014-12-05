@@ -20,14 +20,13 @@
 							received = JSON.parse(data);
 						for (i=0;i<received.length;i++){
 							user = received[i];
-							console.log(user);
 							parentdiv = document.createElement('div');
 							parentdiv.className = 'approvebox';
 							document.getElementById('content').appendChild(parentdiv);
 
 							image = document.createElement('img');
 							image.className = 'approveimage';
-							image.src = '/db_image/'+user.image;
+							image.src = 'db_images/'+user.image;
 							parentdiv.appendChild(image);
 
 							text = document.createElement('div');
@@ -41,7 +40,7 @@
 							parentdiv.appendChild(approvebut);
 							approvebut.setAttribute('href','#');
 							approvebut.id = i;
-							approvebut.setAttribute('onClick','ApproveAccount('+user._id+','+i+')');
+							approvebut.setAttribute('onClick','ApproveAccount("'+user._id+'",'+i+')');
 						}
 					}
 				})
