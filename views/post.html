@@ -54,10 +54,14 @@
 				if (document.getElementById('pic').value==''){
 					image='false';
 				}else{
-					image = 'public/images/'+filename;
+					image = filename;
 				}
-				object = {'title':postTitle,'date':postDate,'content':postContent,'image':image};
-				console.log(object.content)
+				object = {
+					'title':postTitle,
+					'date':postDate,
+					'content':postContent,
+					'image':image
+				};
 				toSend = JSON.stringify(object);
 				$.ajax({
 					type: 'POST',
@@ -65,9 +69,12 @@
 					data: toSend,
 					contentType: 'application/json',
 					success : function (data) {
-						console.log("The ID of the new post is: " + data);
 						document.getElementById("post_id").value = data;
-						document.getElementById('uploadpicform').submit();
+						if (!(object.image=='false')){
+							document.getElementById('uploadpicform').submit();
+						}else{
+							window.location.assign('/index');
+						}
 					}
 				})
 			}

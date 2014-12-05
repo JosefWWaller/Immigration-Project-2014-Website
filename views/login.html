@@ -13,7 +13,7 @@
 						<div id="fields">
 							<div class='text'>
 								Username :<br><br>
-								Password : 
+								Password :
 							</div>
 							<div id='requiredbox'>
 								<div class='required' id='userreq'>Required</div>
@@ -120,8 +120,14 @@
 							filename = filename.substring(1);
 						}
 					}
-					info = {'name':name,'character':character,'username':username,'password':password,'image':filename,'code':code}
-					console.log(info);
+					info = {
+						'name':name,
+						'character':character,
+						'username':username,
+						'password':password,
+						'image':filename,
+						'code':code
+					}
 					toSend = JSON.stringify(info);
 
 					$.ajax({
@@ -198,7 +204,6 @@
 				if (data=='true'){
 					window.location.assign('/index');
 				}else{
-					console.log(data);
 					PlaceRequired ('userreq','user');
 					document.getElementById('pass').style.border = '1px solid #ff3434';
 					if (data=='notappr'){

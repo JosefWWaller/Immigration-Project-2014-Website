@@ -41,6 +41,7 @@
                     <div class="postcontent">
                         <div class="posttextbox textboxred">
                             <div class="postTitle">Example text</div>
+                            <div class="postAuthor">Josef</div>
                             <div class="posttext">
                                 This is some example text.
                             </div>
@@ -66,34 +67,36 @@
                 HttpClient.get('/posts', function (data){
                     posts = JSON.parse(data);
                     posts.forEach(function (post){
+                        if(postsGiven < maxPosts){
 
-                        if (color == 'red'){
-                            color = 'brown';
-                        }else{
-                            color = 'red';
-                        }
-
-                        //Creates the main block of color for the post
-                        newpost = document.createElement('div');
-                        newpost.className = 'post post'+color;
-                        document.getElementById('content').appendChild(newpost);
-
-                        //Creates the content block inside the main block
-                        contentdiv = document.createElement('div');
-                        contentdiv.className = 'postcontent';
-                        newpost.appendChild(contentdiv);
-
-                        //Checks if the post has an image, and if so adds one to it.
-                        if (!(post.image == 'false')){
-                            image = document.createElement('img');
-                            image.src = "/db_images/" + post.image;
-                            contentdiv.appendChild(image);
-                            if (left){
-                                image.className = "postimage imageleft";
-                                left = false;
+                            if (color == 'red'){
+                                color = 'brown';
                             }else{
-                                image.className = "postimage imageright";
-                                left = true;
+                                color = 'red';
+                            }
+
+                            //Creates the main block of color for the post
+                            newpost = document.createElement('div');
+                            newpost.className = 'post post'+color;
+                            document.getElementById('content').appendChild(newpost);
+
+                            //Creates the content block inside the main block
+                            contentdiv = document.createElement('div');
+                            contentdiv.className = 'postcontent';
+                            newpost.appendChild(contentdiv);
+
+                            //Checks if the post has an image, and if so adds one to it.
+                            if (!(post.image == 'false')){
+                                image = document.createElement('img');
+                                image.src = "/db_images/" + post.image;
+                                contentdiv.appendChild(image);
+                                if (left){
+                                    image.className = "postimage imageleft";
+                                    left = false;
+                                }else{
+                                    image.className = "postimage imageright";
+                                    left = true;
+                                }
                             }
                             //Creates the white background for the text
                             whitebackdiv = document.createElement('div');
@@ -106,19 +109,22 @@
                             titlediv.innerHTML = post.title;
                             whitebackdiv.appendChild(titlediv);
 
+                            //Creates the Author div
+                            authordiv = document.createElement('div');
+                            authordiv.className = 'postAuthor';
+                            authordiv.innerHTML = post.author;
+                            whitebackdiv.appendChild(authordiv);
+
                             //Creates the content div
                             contentdiv = document.createElement('div');
                             contentdiv.innerHTML = post.content;
                             contentdiv.className = 'posttext';
                             whitebackdiv.appendChild(contentdiv);
+                            postsGiven++;
                         }
                     })
                 })
             }
-
-
-            
-
         </script>
     </body>
 </html>

@@ -18,20 +18,16 @@
 					url: "/allposts",
 					success: function (data){
 						posts = JSON.parse(data);
-						console.log(posts);
 						MakePosts(posts);
 					}
 				})
 			}
 			function MakePosts (data){
-				console.log(data);
 				var red;
 				var left;
 				for (i = 0; i < data.length; i++){
 
 					post = data[i].post;
-					console.log("DAAT "+data[1].comments)
-					console.log(post);
 					//Parent Div
 					parentdiv = document.createElement('div');
 					if (red){
@@ -86,7 +82,6 @@
 						comments = data[i].comments;
 						for (x=0;x<comments.length;x++){
 							comment = comments[x];
-							console.log("Processing comment ", comment);
 
 							//Parent Comment Div
 							commentParent = document.createElement('div');
@@ -107,7 +102,6 @@
 							commentimg.className = 'commentImage';
 							commentUser.appendChild(commentimg);
 							commentimg.src = '/db_images/'+comment.image;
-							console.log(comment.image);
 
 							//Comment User name div
 							commentName = document.createElement('div');
@@ -166,7 +160,6 @@
 				post = document.getElementById(i);
 				id = post.getAttribute('name');
 				object = {"id":id,"content":content};
-				console.log(object);
 				toSend = JSON.stringify(object);
 				$.ajax({
 					type:"POST",
@@ -184,7 +177,7 @@
 						}
 					},
 					error : function (err,param){
-						console.log(param);
+						console.log(err);
 					}
 				})
 			}

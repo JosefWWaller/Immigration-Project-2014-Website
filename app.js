@@ -36,6 +36,7 @@ app.use(bodyParser.json({
 // Models
 var Post = mongoose.model('Post', {
 	title: String,
+	author: String,
 	content: String,
 	date: Date,
 	image: String
@@ -52,15 +53,16 @@ var UserInfo = mongoose.model('UserInfo', {
 	character : String,
 	username : String,
 	password : String,
+	image : String,
 	approved : Boolean,
 	admin : Boolean
 });
 
 // Read partials from partials folder and add them to handlebars
 var partialsDir = __dirname + '/views/partials/';
- 
+
 var filenames = fs.readdirSync(partialsDir);
- 
+
 filenames.forEach(function (filename) {
   var matches = /^([^.]+).hbs$/.exec(filename);
   if (!matches) {
@@ -124,7 +126,6 @@ app.get('/approve', function (req,res){
 app.get('/posts', function (req,res){
 	Post.find().sort('-date').limit(5).exec(function (err, posts){
 		if (err) throw err;
-		console.log(posts)
 		toSend = JSON.stringify(posts);
 		res.send(toSend);
 	})
@@ -144,17 +145,13 @@ app.get('/allposts', function (req,res){
 							"post": post,
 							"comments": data
 						};
-						// console.log(" Dta IS "+data)
-						console.log("Commentsare "+postObject.comments)
 						callback(null, postObject);
 					}
 				})
 			}
 			allFunc.push(commentsFunction);
 		})
-		console.log("callbacks " + allFunc.length)
 		async.parallel(allFunc, function (err, datas) {
-			console.log('Datas is '+datas)
 			toSend = JSON.stringify(datas);
 			res.send(toSend);
 		});
@@ -168,7 +165,6 @@ app.post('/newcomment', function (req,res){
 			"post_id":req.body.id,
 			"content":req.body.content
 		};
-		console.log(received);
 		object = {
 			"user":req.session.name,
 			"character":req.session.character,
@@ -176,14 +172,10 @@ app.post('/newcomment', function (req,res){
 			"image":req.session.image,
 			"post_id":received.post_id
 		}
-		//console.log(object);
 		Comment.create(object, function (err, post) {
 			if (err) throw err;
 			res.send(JSON.stringify(object));
 		});
-		Comment.find().exec(function (err,comments){
-			console.log(comments);
-		})
 	}
 })
 
@@ -195,15 +187,14 @@ app.get('/tba',function (req,res){
 	})
 })
 app.post('/approveaccount', function (req,res){
-	i = req.body.i;
-	recId = req.body.file;
-	UserInfo.find(recId).exec(function (err,users){
+	userId = req.body.file;
+	UserInfo.findById(userId, function (err, user) {
 		if (err) throw err;
-		users.forEach(function (user){
-			var conditions = {_id:recId}
-				,update = {$inc: {approved:true}}
-		})
-		res.send("Received");
+		user.approved = true;
+		user.save(function (err) {
+			if (err) throw err;
+			res.send("Received");
+		});
 	})
 })
 
@@ -230,12 +221,10 @@ app.post('/postpic', function (req,res){
     var file_name = files['upload'].name;
 
     var postId = fields['post_id'];
-    console.log("ID is " + postId);
     Post.findById(postId, function (err, post) {
     	if (err) throw err;
 
-    	console.log(post);
-	    var filename = 'post_image_' + file_name;
+	    var filename = 'post_image_' + require('randomstring').generate();
 	    var writestream = gridfs.createWriteStream({ filename: filename });
 	    writestream.on('close', function (file) {
 	    	// Set the image property on the post
@@ -259,17 +248,15 @@ app.post('/userpic', function (req, res){
     var file_name = files['upload'].name;
 
     var userId = fields['user_id'];
-    console.log("ID is " + userId);
     UserInfo.findById(userId, function (err, user) {
     	if (err) throw err;
 
-	    var filename = 'user_image_' + file_name;
+	    var filename = 'user_image_' + require('randomstring').generate();
 	    var writestream = gridfs.createWriteStream({ filename: filename });
 	    writestream.on('close', function (file) {
 	    	// Set the image property on the post
 	    	user.image = filename;
 	    	user.save(function (err) {
-	    		console.log(users);
 		    	res.redirect('/index');
 	    	});
 	    });
@@ -282,24 +269,27 @@ app.post('/userpic', function (req, res){
 app.post('/newpost', function (req,res){
 	received = {
 		"title":req.body.title,
+		"author":req.session.name,
 		"date":req.body.date,
 		"content":req.body.content,
 		"image":req.body.image
 	};
-
 	Post.create(received, function (err, post) {
 		if (err) throw err;
 		res.send(post._id);
 	});
-	// Post.find(function (err, posts) {
-	// 	posts.forEach(function (post) {
-	// 		console.log("Got " + post);
-	// 	})
-	// });
 })
 
 app.post('/register', function (req,res){
-	newAccount = {'name':req.body.name, 'character':req.body.character,'username':req.body.username,'password':req.body.password,'image':req.body.image,'approved':false,'admin':req.body.code};
+	newAccount = {
+		'name':req.body.name,
+		'character':req.body.character,
+		'username':req.body.username,
+		'password':req.body.password,
+		'image':req.body.image,
+		'approved':false,
+		'admin':req.body.code
+	};
 	toReturn = {};
 	UserInfo.find().exec(function (err,data){
 		if (err) throw err;
@@ -324,14 +314,13 @@ app.post('/register', function (req,res){
 		toSend = JSON.stringify(toReturn);
 		if (toReturn.username && toReturn.password && toReturn.name && toReturn.character){
 			if (newAccount.admin == 59053427){
-				console.log("Admin");
 				newAccount.admin = true;
 				newAccount.approved = true;
 				req.session.username = newAccount.username;
 				req.session.name = newAccount.name;
+				req.session.image = newAccount.image;
 				req.session.character = newAccount.character;
 				req.session.loggedin = true;
-				console.log(req.session.loggedin);
 			}else{
 				newAccount.admin=false;
 			}
@@ -347,7 +336,9 @@ app.post('/register', function (req,res){
 })
 
 app.post('/checkuser', function (req,res){
-	received = {'username':req.body.username,'password':req.body.password}
+	received = {'username':req.body.username,
+	'password':req.body.password
+	}
 	responce = 'false';
 	UserInfo.find().exec(function (err,users){
 		if (err) throw err;
@@ -358,7 +349,6 @@ app.post('/checkuser', function (req,res){
 					if (account.admin == true){
 						req.session.admin = true;
 					}
-					console.log(account);
 					responce = true;
 					req.session.loggedin = true;
 					req.session.username = account.username;
@@ -367,21 +357,25 @@ app.post('/checkuser', function (req,res){
 					req.session.name = account.name;
 				}else{
 					responce = 'notappr';
-				}	
+				}
 			}
 		})
 		res.send(responce);
 	})
 })
 app.get('/headeruser', function (req,res){
-	console.log(req.session.loggedin);
 	if (req.session.loggedin){
 		if (req.session.admin){
-			object = {"name":req.session.name,"admin":'true'}
+			object = {
+				"name":req.session.name,
+				"admin":'true'
+			}
 			toSend = JSON.stringify(object);
 			res.send(toSend);
 		}else{
-			object = {"name":req.session.name}
+			object = {
+				"name":req.session.name
+			}
 			toSend = JSON.stringify(object);
 			res.send(toSend);
 		}
@@ -391,11 +385,11 @@ app.get('/headeruser', function (req,res){
 })
 
 //Checks for the browser closed
-//by waiting for a responce that 
+//by waiting for a responce that
 //is sent by the client every 5
-//seconds. If the message is 
+//seconds. If the message is
 //recieved over 30 seconds since
-//the last, the req.session is 
+//the last, the req.session is
 //restarted
 app.post('/check', function (req,res){
 
@@ -415,9 +409,6 @@ app.post('/check', function (req,res){
 		req.session.name = null;
 		req.session.character = null;
 	}
-	// else{
-	// 	console.log(since);
-	// }
 	//Records time for next check
 	req.session.active = ((new Date).getTime())/1000;
 	//Sends responce to avoid error on client side. I know it's terrible, I'll fix it later
@@ -425,6 +416,6 @@ app.post('/check', function (req,res){
 })
 
 app.use(express.static(__dirname+'/public'));
-var server = app.listen(3000, function() {
+var server = app.listen(process.env.PORT || 3000, function() {
     console.log('Listening on port %d', server.address().port);
 });
