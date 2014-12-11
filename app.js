@@ -267,17 +267,21 @@ app.post('/userpic', function (req, res){
 })
 
 app.post('/newpost', function (req,res){
-	received = {
-		"title":req.body.title,
-		"author":req.session.name,
-		"date":req.body.date,
-		"content":req.body.content,
-		"image":req.body.image
-	};
-	Post.create(received, function (err, post) {
-		if (err) throw err;
-		res.send(post._id);
-	});
+	if (req.session.loggedin){
+		received = {
+			"title":req.body.title,
+			"author":req.session.name,
+			"date":req.body.date,
+			"content":req.body.content,
+			"image":req.body.image
+		};
+		Post.create(received, function (err, post) {
+			if (err) throw err;
+			res.send(post._id);
+		});
+	}else{
+		res.redirect('/login');
+	}
 })
 
 app.post('/register', function (req,res){
@@ -325,9 +329,6 @@ app.post('/register', function (req,res){
 				newAccount.admin=false;
 			}
 			UserInfo.create(newAccount, function (err, user) {
-				if (err) throw err;
-				toReturn.user_id = user._id;
-				res.send(JSON.stringify(toReturn));
 			})
 		} else {
 			res.send(toSend);
@@ -342,7 +343,7 @@ app.post('/checkuser', function (req,res){
 	responce = 'false';
 	UserInfo.find().exec(function (err,users){
 		if (err) throw err;
-		users.forEach(function(account){
+		users.forEach(function (account){
 
 			if (account.username == received.username && account.password == received.password){
 				if (account.approved){
