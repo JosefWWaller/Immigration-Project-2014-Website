@@ -71,6 +71,12 @@
 					title.innerHTML = post.title;
 					posttextbox.appendChild(title);
 
+					//Post Author
+					author = document.createElement('div');
+					author.className = 'postAuthor';
+					author.innerHTML = post.author;
+					posttextbox.appendChild(author);
+
 					//Post Text
 					text = document.createElement('div');
 					text.className = 'posttext';
