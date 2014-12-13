@@ -686,16 +686,58 @@ a
 	background-color : #c7a24c;
 	box-shadow : 2px 2px 0px #9f3d3d;
 }
-#uploadpicform
-{
-	margin-left : 40px;
-}
 .indexComment
 {
 	width : 100%;
 	height : 60px;
+	font-family : "Arial";
+	color : #ffffff;
+	padding : 15px;
+	box-sizing : border-box;
+	overflow : auto;
 }
 .inCommentAuthor
 {
+	font-size : 25px;
+	height : 100%;
+	float : left;
+	margin-right : 15px;
+}
+.inCommentCon
+{
+	font-size : 20px;
+}
+#uploadpicform
+{
+	margin-left : 40px;
+}
+#userpagepic
+{
+	width : 300px;
+	height : 300px;
+	margin-left : 80px;
+}
+#userbox
+{
+	margin-bottom : 20px;
+	height : 370px;
+}
+#userinfo
+{
+	font-family : "Arial";
+	padding-left : 40px;
+	margin-top : 20px;
+	overflow : auto;
+}
+#userName
+{
+	font-size : 35px;
 	color : #ffffff;
+}
+#userchar
+{
+	margin-top : 5px;
+	font-size : 30px;
+	color : #aaaaaa;
+	font-style : italic;
 }
