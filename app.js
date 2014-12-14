@@ -92,6 +92,9 @@ app.use(session({
 app.get('/index', function (req,res){
 	res.render('index.html');
 })
+app.get('/edit', function (req,res){
+	res.render('edit.html');
+})
 app.get('/login', function (req,res){
 	if (req.session.loggedin){
 		req.session.loggedin = null;
@@ -123,11 +126,18 @@ app.get('/approve', function (req,res){
 })
 
 //Functions
-app.get('/posts', function (req,res){
-	Post.find().sort('-date').limit(5).exec(function (err, posts){
-		if (err) throw err;
-		toSend = JSON.stringify(posts);
-		res.send(toSend);
+
+app.get('/profile/:name', function (req,res){
+	string = req.params.name;
+	string=string.replace(':','');
+	console.log(string);
+	UserInfo.find({ name: string }).exec(function (err,users){
+		console.log(users);
+		if (users.length>1){
+			console.log("ERROR");
+			res.send("ERROR: Please contact Josef immediantly. Error Code 101. Description: two users with the same name when retrieving name. Name "+string+". Users "+users+".")
+		}
+		res.render("profile.html",(users[0]));
 	})
 })
 app.get('/allposts', function (req,res){
