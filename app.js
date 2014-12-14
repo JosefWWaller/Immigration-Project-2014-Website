@@ -249,6 +249,7 @@ app.post('/postpic', function (req,res){
   });
 })
 app.post('/userpic', function (req, res){
+	console.log("User pic");
   var form = new formidable.IncomingForm();
   form.parse(req, function(err, fields, files) {
 
@@ -267,6 +268,8 @@ app.post('/userpic', function (req, res){
 	    	// Set the image property on the post
 	    	user.image = filename;
 	    	user.save(function (err) {
+	    		console.log("ASDF");
+	    		if (err) throw err;
 		    	res.redirect('/index');
 	    	});
 	    });
@@ -304,6 +307,7 @@ app.post('/register', function (req,res){
 		'approved':false,
 		'admin':req.body.code
 	};
+	console.log("New Account "+newAccount);
 	toReturn = {};
 	UserInfo.find().exec(function (err,data){
 		if (err) throw err;
@@ -339,9 +343,10 @@ app.post('/register', function (req,res){
 				newAccount.admin=false;
 			}
 			UserInfo.create(newAccount, function (err, user) {
+				toSend = JSON.stringify(user);
+				console.log(user);
+				res.send(toSend);
 			})
-		} else {
-			res.send(toSend);
 		}
 	})
 })

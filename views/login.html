@@ -143,6 +143,8 @@
 				}
 			}
 			function NewAccount (data) {
+				console.log("ASDADSF");
+				console.log(data);
 				error = false;
 				var usernameError;
 				if (data.name == false){
@@ -169,8 +171,9 @@
 					}
 				}
 				if (!error){
-					document.getElementById('user_id').value = data.user_id;
+					document.getElementById('user_id').value = data._id;
 					document.getElementById('uploadpicform').submit();
+					console.log("ASDFSDFAASDF");
 				}
 			}
 			function CheckUserInfo () {
