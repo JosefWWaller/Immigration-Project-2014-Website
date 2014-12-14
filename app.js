@@ -128,16 +128,36 @@ app.get('/approve', function (req,res){
 //Functions
 
 app.get('/profile/:name', function (req,res){
-	string = req.params.name;
-	string=string.replace(':','');
-	console.log(string);
-	UserInfo.find({ name: string }).exec(function (err,users){
-		console.log(users);
-		if (users.length>1){
-			console.log("ERROR");
-			res.send("ERROR: Please contact Josef immediantly. Error Code 101. Description: two users with the same name when retrieving name. Name "+string+". Users "+users+".")
+	name = (req.params.name).replace(':',"");
+	toReturn = {
+		"name":name
+	}
+	console.log(toReturn);
+	res.render("profile.html",toReturn)
+})
+app.get('/users/:name', function (req,res){
+	name = (req.params.name).replace(':',"");
+	UserInfo.find({"name" : name}).exec(function (err,users){
+		if (users.length > 1){
+			console.log("ERROR 101");
+			res.send("Error! Please contact Josef Immediantly");
 		}
-		res.render("profile.html",(users[0]));
+		user = users[0];
+		user.password = null;
+		user.username = null;
+		Post.find({"author" : name}).exec(function (err,posts){
+			toReturn = {
+				"userInfo":user,
+				"posts":posts
+			}
+			if (req.session.name = name){
+				toReturn.isUser = true;
+			}else{
+				toReturn.isUser = false;
+			}
+			toSend = JSON.stringify(toReturn);
+			res.send(toSend);
+		})
 	})
 })
 app.get('/allposts', function (req,res){

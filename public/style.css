@@ -161,6 +161,10 @@ a
 	font-size: 24px;
 	margin-top : 10px;
 }
+.postAuthor:hover
+{
+	color :#aaaaaa;
+}
 .postimage
 {
 	height : 100%;
@@ -734,7 +738,7 @@ a
 	font-size : 35px;
 	color : #ffffff;
 }
-#userchar
+#userChar
 {
 	margin-top : 5px;
 	font-size : 30px;
