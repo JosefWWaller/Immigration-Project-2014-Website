@@ -745,3 +745,14 @@ a
 	color : #aaaaaa;
 	font-style : italic;
 }
+#changeInfo
+{
+	color : #ffffff;
+	font-family : "Arial";
+	font-size : 20px;
+	background-color : #71A9A9;
+	padding : 10px;
+	height : 30px;
+	text-align : center;
+	margin-left : 40px;
+}
