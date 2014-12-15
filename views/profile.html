@@ -10,40 +10,16 @@
 					<div id="pagetitle">Change Account</div>
 					<div style="float:left">
 						<img id="userpagepic">
-                            <form action='/userpic' id='uploadpicform' style = "margin-left : 260px; visibility : hidden"enctype="multipart/form-data" method="post">
-                                <input type="file" id='pic' name="upload" multiple="multiple" accept="image/*"><br>
-                                <input type="hidden" name="user_id" id="user_id">
-                            </form>
 					</div>
 					<div id="userinfo">
 						<div id="userName">Name</div><br>
 						<div id="userChar">Character</div>
-                        <input class="changeUserIn changeUserName"><br>
-                        <input class="changeUserIn changeUserChar">
 					</div>
-                    <!--<a id="changeUser" href="#">Change</a>-->
 				</div>
             </div>
 			{{>footer}}
 		</div>
 		<script>
-            function Edit () {
-                name1 = document.getElementById('userName');
-                name1.style.visibility = "hidden";
-                name1.style.position = "absolute";
-
-                character1 = document.getElementById('userChar');
-                character1.style.visibility = "hidden";
-                character1.style.position = "absolute";
-
-                changeName1 = document.getElementsByClassName('changeUserIn changeUserName')[0];
-                changeName1.style.visibility = "visible";
-                changeName1.value = name1.innerHTML;
-
-                changeChar1 = document.getElementsByClassName('changeUserIn changeUserChar')[0];
-                changeChar1.style.visibility = "visible";
-                changeChar1.value = character1.innerHTML;
-            }
 			$.ajax({
 				type : "GET",
 				url : "/users/:{{name}}",
@@ -53,19 +29,10 @@
 				success : function (data){
 					user = JSON.parse(data).userInfo;
 					posts = JSON.parse(data).posts;
-                    isUser = JSON.parse(data).isUser;
-                    console.log(isUser);
 					console.log(posts);
 					document.getElementById('userName').innerHTML = user.name;
 					document.getElementById('userChar').innerHTML = user.character;
 					document.getElementById('userpagepic').src = "/db_images/"+user.image;
-                    if (isUser){
-                        change = document.createElement('a');
-                        change.id = 'changeUser';
-                        change.innerHTML = "Change";
-                        document.getElementById('userbox').appendChild(change);
-                        change.setAttribute("onClick","Edit()");
-                    }
 					var color;
 					var left;
 					for (i=0;i<posts.length;i++){
