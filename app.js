@@ -54,6 +54,7 @@ var UserInfo = mongoose.model('UserInfo', {
 	username : String,
 	password : String,
 	image : String,
+	bio : String,
 	approved : Boolean,
 	admin : Boolean
 });
@@ -98,6 +99,7 @@ app.get('/edit', function (req,res){
 app.get('/login', function (req,res){
 	if (req.session.loggedin){
 		req.session.loggedin = null;
+		req.session.name = null;
 		req.session.admin = null;
 		res.redirect('/index');
 	}else{
@@ -160,6 +162,7 @@ app.get('/users/:name', function (req,res){
 			}
 			if (req.session.name = name){
 				toReturn.isUser = true;
+				console.log(req.session.name+" + "+name);
 			}else{
 				toReturn.isUser = false;
 			}

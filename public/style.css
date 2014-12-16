@@ -357,7 +357,6 @@ a
 #loginsubmit
 {
 	background-color : #c7a24c;
-
 }
 #loginsubmit:hover{
 	background-color : #9f823d;
@@ -747,6 +746,19 @@ a
 	color : #aaaaaa;
 	font-style : italic;
 }
+#userBio
+{
+	height : 150px;
+	width : 600px;
+	background-color : #488787;
+	margin-top : 5px;
+	padding : 5px;
+	box-sizing:border-box;
+	color : #ffffff;
+	font-family : "Arial";
+	font-size : 20px;
+	overflow : auto;
+}
 #changeInfo
 {
 	width : 75px;
@@ -769,17 +781,76 @@ a
 {
 	background-color : #c7a24c;
 	width : 100%;
-	height : 600px;
+	height : 700px;
 	overflow : auto;
 }
 #changeBox
 {
+	color : #ffffff;
+	font-family : "Arial";
+	font-size : 20px;
 	margin-right : auto;
 	margin-left : auto;
-	width : 300px;
+	width : 340px;
 	padding : 20px 5px;
-	height : 400px;
+	height : 500px;
 	background-color : #d2b570;
 	box-sizing : border-box;
 	margin-top : 100px;
+}
+#changeTitle
+{
+	display : block;
+	margin-left : auto;
+	margin-right : auto;
+	text-align : center;
+	color : #ffffff;
+	margin-bottom : 40px;
+	font-size : 25px;
+	font-style : italic;
+}
+#changeFieldBox
+{
+	text-align : center;
+	margin-left : auto;
+	margin-right : auto;
+	height : 300px;
+}
+.changeBoxInput
+{
+	border : 0px;
+	background-color : #dbc48d;
+	height : 20px;
+	width : 150px;
+	margin-bottom : 15px;
+	color : #ffffff;
+	font-family : "Arial";
+	font-size : 17px;
+	padding : 2px;
+}
+.changeText
+{
+	margin-bottom : 17px;
+	font-size : 20px;
+}
+#changeTextarea
+{
+	border : 0px;
+	background-color : #dbc48d;
+	color : #ffffff;
+	font-family : "Arial";
+	font-size : 17px;
+	resize : none;
+	overflow : auto;
+	width : 150px;
+	height : 75px;
+	padding : 2px;
+}
+#changeSubmit
+{
+	background-color:#c7a24c;
+}
+#changeSubmit:hover
+{
+	background-color : #d3a854;
 }

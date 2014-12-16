@@ -14,6 +14,7 @@
 					<div id="userinfo">
 						<div id="userName">Name</div><br>
 						<div id="userChar">Character</div>
+                        <div id="userBio">Blah Blah Blah Blah</div>
 						<!--<a id="changeInfo" href="#">Change</a>-->
 					</div>
 				</div>
@@ -35,12 +36,17 @@
 					document.getElementById('userName').innerHTML = user.name;
 					document.getElementById('userChar').innerHTML = user.character;
 					document.getElementById('userpagepic').src = "/db_images/"+user.image;
+                    if (user.bio ==null){
+                        document.getElementById('userBio').innerHTML = "No Bio";
+                    }else{
+                        document.getElementById('userBio').innerHTML = user.bio;
+                    }
 					var color;
 					var left;
                     if (isUser){
                         change = document.createElement('a');
                         change.id = 'changeInfo';
-                        change.setAttribute('href','/edituser/:'+user.name)
+                        change.setAttribute('href','/edituser/<!:'+user.name)
                         document.getElementById('userinfo').appendChild(change);
                         change.innerHTML = "Change";
                     }
