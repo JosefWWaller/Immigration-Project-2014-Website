@@ -14,7 +14,7 @@
 					<div id="userinfo">
 						<div id="userName">Name</div><br>
 						<div id="userChar">Character</div>
-						<a id="changeInfo">Change</a>
+						<!--<a id="changeInfo" href="#">Change</a>-->
 					</div>
 				</div>
             </div>
@@ -30,12 +30,20 @@
 				success : function (data){
 					user = JSON.parse(data).userInfo;
 					posts = JSON.parse(data).posts;
+                    isUser = JSON.parse(data).isUser;
 					console.log(posts);
 					document.getElementById('userName').innerHTML = user.name;
 					document.getElementById('userChar').innerHTML = user.character;
 					document.getElementById('userpagepic').src = "/db_images/"+user.image;
 					var color;
 					var left;
+                    if (isUser){
+                        change = document.createElement('a');
+                        change.id = 'changeInfo';
+                        change.setAttribute('href','/edituser/:'+user.name)
+                        document.getElementById('userinfo').appendChild(change);
+                        change.innerHTML = "Change";
+                    }
 					for (i=0;i<posts.length;i++){
                         post = posts[i];
                         if (color == null){

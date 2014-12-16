@@ -135,6 +135,14 @@ app.get('/profile/:name', function (req,res){
 	console.log(toReturn);
 	res.render("profile.html",toReturn)
 })
+app.get('/edituser/:name', function (req,res){
+	name = req.params.name;
+	if (name==":"+req.session.name){
+		res.render('edituser.html')
+	}else{
+		res.send("Not logged in"+req.session.name)
+	}
+})
 app.get('/users/:name', function (req,res){
 	name = (req.params.name).replace(':',"");
 	UserInfo.find({"name" : name}).exec(function (err,users){

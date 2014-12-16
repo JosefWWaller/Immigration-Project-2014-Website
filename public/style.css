@@ -720,6 +720,7 @@ a
 	width : 300px;
 	height : 300px;
 	margin-left : 200px;
+	border : 4px solid #ffffff;
 }
 #userbox
 {
@@ -732,6 +733,7 @@ a
 	padding-left : 40px;
 	margin-top : 20px;
 	overflow : auto;
+	height : 300px;
 }
 #userName
 {
@@ -747,12 +749,37 @@ a
 }
 #changeInfo
 {
-	color : #ffffff;
-	font-family : "Arial";
-	font-size : 20px;
+	width : 75px;
+	height : 35px;
+	display : block;
 	background-color : #71A9A9;
-	padding : 10px;
-	height : 30px;
+	padding-top : 6px;
 	text-align : center;
-	margin-left : 40px;
+	font-size : 20px;
+	box-sizing : border-box;
+	box-shadow : 2px 2px 0px #3E7676;
+	margin-top : 10px;
+	color : #ffffff;
+}
+#changeInfo:hover
+{
+	background-color : #67a5a5;
+}
+#bigChangeBox
+{
+	background-color : #c7a24c;
+	width : 100%;
+	height : 600px;
+	overflow : auto;
+}
+#changeBox
+{
+	margin-right : auto;
+	margin-left : auto;
+	width : 300px;
+	padding : 20px 5px;
+	height : 400px;
+	background-color : #d2b570;
+	box-sizing : border-box;
+	margin-top : 100px;
 }
