@@ -46,7 +46,7 @@
                     if (isUser){
                         change = document.createElement('a');
                         change.id = 'changeInfo';
-                        change.setAttribute('href','/edituser/:'+user.name)
+                        change.setAttribute('href','/edituser/'+user.name)
                         document.getElementById('userinfo').appendChild(change);
                         change.innerHTML = "Change";
                     }
@@ -95,7 +95,7 @@
                         authordiv = document.createElement('a');
                         authordiv.className = 'postAuthor';
                         authordiv.innerHTML = post.author;
-                        authordiv.setAttribute('href','/profile/:'+post.author);
+                        authordiv.setAttribute('href','/profile/'+post.author);
                         whitebackdiv.appendChild(authordiv);
 
                         //Creates the content div

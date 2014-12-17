@@ -139,14 +139,11 @@ app.get('/profile/:name', function (req,res){
 	toReturn = {
 		"name":name
 	}
-	console.log(toReturn);
 	res.render("profile.html",toReturn)
 })
 app.get('/edituser/:name', function (req,res){
 	name = req.params.name;
-	console.log(req.session.name);
-	if (name==":"+req.session.name){
-		console.log("Not logged in"+req.session.name+ " "+name)
+	if (name==req.session.name){
 		res.render('edituser.html')
 	}else{
 		res.send("Not logged in"+req.session.name+ " "+name)
@@ -159,14 +156,15 @@ app.post('/edituserinfo', function (req,res){
 		}
 		if (users.length == 0){
 			res.send(false);
-			console.log(req.body.user +" "+req.body.pass)
+			console.log("ERROR ERROR "+req.body.user +" "+req.body.pass)
 		}else{
 			user = users[0];
 			name = user.name;
 			Post.find({"author":name}).exec(function (err,posts){
-				posts.forEach(function (err,data){
-					if (data.author){
-						data.author = req.body.name;
+				posts.forEach(function (err,post){
+					if (err) throw err;
+					if (post.author){
+						post.author = req.body.name;
 					}
 				})
 				posts.save(function (err){
@@ -185,12 +183,12 @@ app.post('/edituserinfo', function (req,res){
 app.get('/users/:name', function (req,res){
 	name = (req.params.name).replace(':',"");
 	UserInfo.find({"name" : name}).exec(function (err,users){
-		if (users.length > 1){
+		if (users.length != 1){
 			console.log("ERROR 101");
 			res.send("Error! Please contact Josef Immediantly");
+			return;
 		}
 		user = users[0];
-		console.log("Users : "+user)
 		user.password = null;
 		user.username = null;
 		Post.find({"author" : name}).exec(function (err,posts){
@@ -200,7 +198,6 @@ app.get('/users/:name', function (req,res){
 			}
 			if (req.session.name == name){
 				toReturn.isUser = true;
-				console.log(req.session.name+" + "+name);
 			}else{
 				toReturn.isUser = false;
 			}
@@ -318,7 +315,6 @@ app.post('/postpic', function (req,res){
   });
 })
 app.post('/userpic', function (req, res){
-	console.log("User pic");
   var form = new formidable.IncomingForm();
   form.parse(req, function(err, fields, files) {
 
@@ -337,7 +333,6 @@ app.post('/userpic', function (req, res){
 	    	// Set the image property on the post
 	    	user.image = filename;
 	    	user.save(function (err) {
-	    		console.log("ASDF");
 	    		if (err) throw err;
 		    	res.redirect('/index');
 	    	});
@@ -376,7 +371,6 @@ app.post('/register', function (req,res){
 		'approved':false,
 		'admin':req.body.code
 	};
-	console.log("New Account "+newAccount);
 	toReturn = {};
 	UserInfo.find().exec(function (err,data){
 		if (err) throw err;
@@ -412,10 +406,8 @@ app.post('/register', function (req,res){
 				newAccount.admin=false;
 			}
 			UserInfo.create(newAccount, function (err, user) {
-				console.log("ASDF");
 				if (err) throw err;
 				toSend = JSON.stringify(user);
-				console.log(user);
 				res.send(toSend);
 			})
 		}
