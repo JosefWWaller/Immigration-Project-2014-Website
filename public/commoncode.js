@@ -45,7 +45,16 @@ function CheckLogIn () {
 function SetHeader (data) {
     received = JSON.parse(data);
     if (!(received.name=='false')){
-        document.getElementById('logsign').innerHTML = 'Hello '+received.name+'<br />Sign Out';
+        document.getElementById('logsign').innerHTML = 'Hello '+received.name+'<br>Sign Out';
+
+        br = document.createElement('br');
+        document.getElementById('dropMenu').appendChild(br);
+
+        user = document.createElement('a');
+        user.className = "button dropMenuItem";
+        user.innerHTML = "My Profile";
+        user.href = "/me";
+        document.getElementById('dropMenu').appendChild(user);
     }
     if (received.admin=='true'){
         adminMenu = document.createElement('div');

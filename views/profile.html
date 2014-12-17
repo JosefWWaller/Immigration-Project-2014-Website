@@ -32,7 +32,7 @@
 					user = JSON.parse(data).userInfo;
 					posts = JSON.parse(data).posts;
                     isUser = JSON.parse(data).isUser;
-					console.log(posts);
+					console.log(user);
 					document.getElementById('userName').innerHTML = user.name;
 					document.getElementById('userChar').innerHTML = user.character;
 					document.getElementById('userpagepic').src = "/db_images/"+user.image;
@@ -46,7 +46,7 @@
                     if (isUser){
                         change = document.createElement('a');
                         change.id = 'changeInfo';
-                        change.setAttribute('href','/edituser/<!:'+user.name)
+                        change.setAttribute('href','/edituser/:'+user.name)
                         document.getElementById('userinfo').appendChild(change);
                         change.innerHTML = "Change";
                     }

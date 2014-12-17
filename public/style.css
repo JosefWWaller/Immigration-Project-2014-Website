@@ -73,6 +73,28 @@ body
 {
 	color : #d0d0d0;
 }
+#dropMenu
+{
+	text-align : center;
+	color : #ffffff;
+	height : 15px;
+	font-size : 15px;
+	font-family : "Microsoft New Tai Lue","Arial";
+	margin-top : auto;
+	margin-bottom : auto;
+	margin-left : auto;
+	margin-right : auto;
+	overflow : hidden;
+	display : block;
+}
+#dropMenu:hover
+{
+	overflow : visible;
+}
+.dropMenuItem
+{
+	display : block;
+}
 .dropdown
 {
 	background-color : #4e9393;

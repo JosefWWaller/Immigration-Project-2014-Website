@@ -126,6 +126,11 @@ app.get('/approve', function (req,res){
 		res.redirect('/index');
 	}
 })
+app.get('/me', function(req,res){
+	if (req.session.loggedin){
+		res.redirect('/profile/:'+req.session.name);
+	}
+})
 
 //Functions
 
@@ -139,10 +144,12 @@ app.get('/profile/:name', function (req,res){
 })
 app.get('/edituser/:name', function (req,res){
 	name = req.params.name;
+	console.log(req.session.name);
 	if (name==":"+req.session.name){
+		console.log("Not logged in"+req.session.name+ " "+name)
 		res.render('edituser.html')
 	}else{
-		res.send("Not logged in"+req.session.name)
+		res.send("Not logged in"+req.session.name+ " "+name)
 	}
 })
 app.get('/users/:name', function (req,res){
@@ -153,6 +160,7 @@ app.get('/users/:name', function (req,res){
 			res.send("Error! Please contact Josef Immediantly");
 		}
 		user = users[0];
+		console.log("Users : "+user)
 		user.password = null;
 		user.username = null;
 		Post.find({"author" : name}).exec(function (err,posts){
@@ -160,7 +168,7 @@ app.get('/users/:name', function (req,res){
 				"userInfo":user,
 				"posts":posts
 			}
-			if (req.session.name = name){
+			if (req.session.name == name){
 				toReturn.isUser = true;
 				console.log(req.session.name+" + "+name);
 			}else{
