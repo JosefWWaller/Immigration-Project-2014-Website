@@ -47,9 +47,6 @@ function SetHeader (data) {
     if (!(received.name=='false')){
         document.getElementById('logsign').innerHTML = 'Hello '+received.name+'<br>Sign Out';
 
-        br = document.createElement('br');
-        document.getElementById('dropMenu').appendChild(br);
-
         user = document.createElement('a');
         user.className = "button dropMenuItem";
         user.innerHTML = "My Profile";

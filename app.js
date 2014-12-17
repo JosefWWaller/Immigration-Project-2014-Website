@@ -152,6 +152,36 @@ app.get('/edituser/:name', function (req,res){
 		res.send("Not logged in"+req.session.name+ " "+name)
 	}
 })
+app.post('/edituserinfo', function (req,res){
+	UserInfo.find({"username":req.body.user,"password":req.body.pass}).exec(function (err,users){
+		if (users.length>1){
+			res.send("Error! Contact Josef ASAP")
+		}
+		if (users.length == 0){
+			res.send(false);
+			console.log(req.body.user +" "+req.body.pass)
+		}else{
+			user = users[0];
+			name = user.name;
+			Post.find({"author":name}).exec(function (err,posts){
+				posts.forEach(function (err,data){
+					if (data.author){
+						data.author = req.body.name;
+					}
+				})
+				posts.save(function (err){
+					if (err) throw err;
+				})
+			})
+			user.name = req.body.name;
+			user.character = req.body.character;
+			user.save(function (err){
+				if (err) throw err;
+				res.send("Success!")
+			})
+		}
+	})
+})
 app.get('/users/:name', function (req,res){
 	name = (req.params.name).replace(':',"");
 	UserInfo.find({"name" : name}).exec(function (err,users){
@@ -382,6 +412,8 @@ app.post('/register', function (req,res){
 				newAccount.admin=false;
 			}
 			UserInfo.create(newAccount, function (err, user) {
+				console.log("ASDF");
+				if (err) throw err;
 				toSend = JSON.stringify(user);
 				console.log(user);
 				res.send(toSend);

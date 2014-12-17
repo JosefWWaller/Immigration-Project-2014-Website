@@ -11,8 +11,8 @@
 						<div id="changeTitle">Edit User Info</div>
 						<div id="changeFieldBox">
 							<div style="float:left; margin-left : 15px; text-align : right">
-							<div class="changeText">Old Name :</div>
-							<div class="changeText">Old Character :</div>
+							<!--<div class="changeText">Old Name :</div>
+							<div class="changeText">Old Character :</div>-->
 							<div class="changeText">New Name :</div>
 							<div class="changeText">New Character :</div>
 							<div class="changeText">Username :</div>
@@ -21,13 +21,13 @@
 							<br>
 							</div>
 							<div style="float:right; text-align : left">
-							<input class="changeBoxInput"> <br>
-							<input class="changeBoxInput"> <br>
-							<input class="changeBoxInput"> <br>
-							<input class="changeBoxInput"> <br>
-							<input class="changeBoxInput"> <br>
-							<input class="changeBoxInput"> <br>
-							<textarea id="changeTextarea"></textarea>
+							<!--<input class="changeBoxInput" id="oldName"> <br>
+							<input class="changeBoxInput" id="oldChar"> <br>-->
+							<input class="changeBoxInput" id="newName"> <br>
+							<input class="changeBoxInput" id="newChar"> <br>
+							<input class="changeBoxInput" id="user"> <br>
+							<input class="changeBoxInput" id="pass"> <br>
+							<textarea id="changeTextarea">asdf</textarea>
 							</div>
 						</div>
 							<div class="submit" id="changeSubmit">Submit</div>
@@ -36,5 +36,36 @@
 			</div>
 			{{>footer}}
 		</div>
+		<script>
+            function ChangeInfo () {
+            	//oldName = document.getElementById('oldName').value;
+            	newName = document.getElementById('newName').value;
+            	//oldChar = document.getElementById('newName').value;
+            	newChar = document.getElementById('newChar').value;
+            	user = document.getElementById('user').value;
+            	pass = document.getElementById('pass').value;
+            	var bio = document.getElementById('changeTextarea').value;
+            	object = {
+            		//"oldName":oldName,
+            		//"oldChar":oldChar,
+            		"newName":newName,
+            		"newChar":newChar,
+            		"user":user,
+            		"pass":pass,
+            		"bio":bio
+            	}
+            	toSend = JSON.stringify(object);
+            	$.ajax({
+            		type:"POST",
+            		url:"/edituserinfo",
+            		contentType:"application/json",
+            		data:toSend,
+            		success : function (data){
+            			console.log("Success! "+data);
+            		}
+            	})
+            }
+            $('#changeSubmit').click(ChangeInfo);
+		</script>
 	</body>
 </html>
