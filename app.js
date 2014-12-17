@@ -190,7 +190,7 @@ app.get('/users/:name', function (req,res){
 	UserInfo.find({"name" : name}).exec(function (err,users){
 		if (users.length != 1){
 			console.log("ERROR 101");
-			res.send("Error! Please contact Josef Immediantly");
+			res.send("Error! Please contact Josef Immediantly. Length : "+user.length);
 			return;
 		}
 		user = users[0];
