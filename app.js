@@ -154,6 +154,8 @@ app.get('/edituser/:name', function (req,res){
 })
 app.post('/edituserinfo', function (req,res){
 	UserInfo.find({"username":req.body.user,"password":req.body.pass}).exec(function (err,users){
+		console.log("users "+users+"ASDF");
+		if (err) throw err;
 		if (users.length>1){
 			res.send("Error! Contact Josef ASAP")
 		}
@@ -164,11 +166,15 @@ app.post('/edituserinfo', function (req,res){
 			user = users[0];
 			name = user.name;
 			Post.find({"author":name}).exec(function (err,posts){
-				posts.forEach(function (err,data){
-					if (data.author){
-						data.author = req.body.name;
+				console.log("Posts : "+posts+" /end")
+				if (err) throw err;
+				for(i=0;i<posts.length;i++){
+					post = posts[i];
+					if (err) throw err;
+					if (post.author){
+						post.author = req.body.name;
 					}
-				})
+				}
 				posts.save(function (err){
 					if (err) throw err;
 				})
