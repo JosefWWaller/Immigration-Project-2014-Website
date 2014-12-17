@@ -18,6 +18,9 @@ mongoose.connect(uristring, function (err){
 var grid = require('gridfs-stream');
 var gridfs = grid(mongoose.connection.db, mongoose.mongo);
 
+// Detect production (on heroku)
+var isDevelopment = process.env.NODE_ENV != "production";
+
 // Use quickthumb
 app.use(qt.static(__dirname + '/'));
 
@@ -161,22 +164,24 @@ app.post('/edituserinfo', function (req,res){
 			user = users[0];
 			name = user.name;
 			Post.find({"author":name}).exec(function (err,posts){
-				posts.forEach(function (err,post){
-					if (err) throw err;
+				posts.forEach(function (post){
 					if (post.author){
 						post.author = req.body.name;
 					}
-				})
-				posts.save(function (err){
-					if (err) throw err;
+					post.save(function (err){
+						if (err) throw err;
+					})
 				})
 			})
 			user.name = req.body.name;
 			user.character = req.body.character;
+			user.bio = req.body.bio;
+			req.session.name = req.body.name;
+			req.session.character = req.body.character;
 			user.save(function (err){
 				if (err) throw err;
-				res.send("Success!")
 			})
+			res.send(user.name)
 		}
 	})
 })
@@ -394,7 +399,7 @@ app.post('/register', function (req,res){
 		})
 		toSend = JSON.stringify(toReturn);
 		if (toReturn.username && toReturn.password && toReturn.name && toReturn.character){
-			if (newAccount.admin == 59053427){
+			if (newAccount.admin == 59053427 || (isDevelopment && newAccount.admin == 1)){
 				newAccount.admin = true;
 				newAccount.approved = true;
 				req.session.username = newAccount.username;
