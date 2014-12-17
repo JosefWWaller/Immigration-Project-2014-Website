@@ -48,8 +48,8 @@
             	object = {
             		//"oldName":oldName,
             		//"oldChar":oldChar,
-            		"newName":newName,
-            		"newChar":newChar,
+            		"name":newName,
+            		"character":newChar,
             		"user":user,
             		"pass":pass,
             		"bio":bio
@@ -61,7 +61,7 @@
             		contentType:"application/json",
             		data:toSend,
             		success : function (data){
-            			console.log("Success! "+data);
+            			window.location.assign('/profile/:'+data);
             		}
             	})
             }

@@ -18,6 +18,9 @@ mongoose.connect(uristring, function (err){
 var grid = require('gridfs-stream');
 var gridfs = grid(mongoose.connection.db, mongoose.mongo);
 
+// Detect production (on heroku)
+var isDevelopment = process.env.NODE_ENV != "production";
+
 // Use quickthumb
 app.use(qt.static(__dirname + '/'));
 
@@ -139,14 +142,11 @@ app.get('/profile/:name', function (req,res){
 	toReturn = {
 		"name":name
 	}
-	console.log(toReturn);
 	res.render("profile.html",toReturn)
 })
 app.get('/edituser/:name', function (req,res){
 	name = req.params.name;
-	console.log(req.session.name);
-	if (name==":"+req.session.name){
-		console.log("Not logged in"+req.session.name+ " "+name)
+	if (name==req.session.name){
 		res.render('edituser.html')
 	}else{
 		res.send("Not logged in"+req.session.name+ " "+name)
@@ -159,38 +159,41 @@ app.post('/edituserinfo', function (req,res){
 		}
 		if (users.length == 0){
 			res.send(false);
-			console.log(req.body.user +" "+req.body.pass)
+			console.log("ERROR ERROR "+req.body.user +" "+req.body.pass)
 		}else{
 			user = users[0];
 			name = user.name;
 			Post.find({"author":name}).exec(function (err,posts){
-				posts.forEach(function (err,data){
-					if (data.author){
-						data.author = req.body.name;
+				posts.forEach(function (post){
+					if (post.author){
+						post.author = req.body.name;
 					}
-				})
-				posts.save(function (err){
-					if (err) throw err;
+					post.save(function (err){
+						if (err) throw err;
+					})
 				})
 			})
 			user.name = req.body.name;
 			user.character = req.body.character;
+			user.bio = req.body.bio;
+			req.session.name = req.body.name;
+			req.session.character = req.body.character;
 			user.save(function (err){
 				if (err) throw err;
-				res.send("Success!")
 			})
+			res.send(user.name)
 		}
 	})
 })
 app.get('/users/:name', function (req,res){
 	name = (req.params.name).replace(':',"");
 	UserInfo.find({"name" : name}).exec(function (err,users){
-		if (users.length > 1){
+		if (users.length != 1){
 			console.log("ERROR 101");
 			res.send("Error! Please contact Josef Immediantly");
+			return;
 		}
 		user = users[0];
-		console.log("Users : "+user)
 		user.password = null;
 		user.username = null;
 		Post.find({"author" : name}).exec(function (err,posts){
@@ -200,7 +203,6 @@ app.get('/users/:name', function (req,res){
 			}
 			if (req.session.name == name){
 				toReturn.isUser = true;
-				console.log(req.session.name+" + "+name);
 			}else{
 				toReturn.isUser = false;
 			}
@@ -318,7 +320,6 @@ app.post('/postpic', function (req,res){
   });
 })
 app.post('/userpic', function (req, res){
-	console.log("User pic");
   var form = new formidable.IncomingForm();
   form.parse(req, function(err, fields, files) {
 
@@ -337,7 +338,6 @@ app.post('/userpic', function (req, res){
 	    	// Set the image property on the post
 	    	user.image = filename;
 	    	user.save(function (err) {
-	    		console.log("ASDF");
 	    		if (err) throw err;
 		    	res.redirect('/index');
 	    	});
@@ -376,7 +376,6 @@ app.post('/register', function (req,res){
 		'approved':false,
 		'admin':req.body.code
 	};
-	console.log("New Account "+newAccount);
 	toReturn = {};
 	UserInfo.find().exec(function (err,data){
 		if (err) throw err;
@@ -400,7 +399,7 @@ app.post('/register', function (req,res){
 		})
 		toSend = JSON.stringify(toReturn);
 		if (toReturn.username && toReturn.password && toReturn.name && toReturn.character){
-			if (newAccount.admin == 59053427){
+			if (newAccount.admin == 59053427 || (isDevelopment && newAccount.admin == 1)){
 				newAccount.admin = true;
 				newAccount.approved = true;
 				req.session.username = newAccount.username;
@@ -412,10 +411,8 @@ app.post('/register', function (req,res){
 				newAccount.admin=false;
 			}
 			UserInfo.create(newAccount, function (err, user) {
-				console.log("ASDF");
 				if (err) throw err;
 				toSend = JSON.stringify(user);
-				console.log(user);
 				res.send(toSend);
 			})
 		}
