@@ -190,7 +190,7 @@ app.get('/users/:name', function (req,res){
 	UserInfo.find({"name" : name}).exec(function (err,users){
 		if (users.length != 1){
 			console.log("ERROR 101");
-			res.send("Error! Please contact Josef Immediantly. Length : "+users.length);
+			res.send("Error! Please contact Josef Immediantly. Length : "+users.length+". Name : "+name);
 			return;
 		}
 		user = users[0];
@@ -376,6 +376,9 @@ app.post('/register', function (req,res){
 		'approved':false,
 		'admin':req.body.code
 	};
+	if (newAccount.name.slice(-1)==" "){
+		newAccount.name = newAccount.name.slice(0,-1);
+	}
 	toReturn = {};
 	UserInfo.find().exec(function (err,data){
 		if (err) throw err;
@@ -412,10 +415,11 @@ app.post('/register', function (req,res){
 			}
 			UserInfo.create(newAccount, function (err, user) {
 				if (err) throw err;
-				toSend = JSON.stringify(user);
-				res.send(toSend);
 			})
 		}
+		toSend = JSON.stringify(toReturn);
+		console.log(toSend);
+		res.send(toSend);
 	})
 })
 
