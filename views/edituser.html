@@ -61,7 +61,9 @@
             		contentType:"application/json",
             		data:toSend,
             		success : function (data){
-            			window.location.assign('/profile/:'+data);
+            			if (data){
+            				window.location.assign('/profile/'+data);
+            			}
             		}
             	})
             }

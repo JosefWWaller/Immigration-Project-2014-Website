@@ -212,7 +212,7 @@ app.get('/users/:name', function (req,res){
 	})
 })
 app.get('/allposts', function (req,res){
-	Post.find().sort('-date').limit(20).exec(function (err, posts){
+	Post.find().sort('-date').exec(function (err, posts){
 		allFunc = [];
 		posts.forEach(function (post) {
 
