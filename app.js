@@ -155,11 +155,11 @@ app.get('/edituser/:name', function (req,res){
 app.post('/edituserinfo', function (req,res){
 	UserInfo.find({"username":req.body.user,"password":req.body.pass}).exec(function (err,users){
 		if (users.length>1){
-			res.send("Error! Contact Josef ASAP")
+			res.send("Error! Contact Josef ASAP or try logging in again!")
 		}
 		if (users.length == 0){
 			res.send(false);
-			console.log("ERROR ERROR "+req.body.user +" "+req.body.pass)
+			console.log("ERROR ERROR user :"+req.body.user +" pass :"+req.body.pass)
 		}else{
 			user = users[0];
 			name = user.name;
@@ -184,6 +184,25 @@ app.post('/edituserinfo', function (req,res){
 			res.send(user.name)
 		}
 	})
+})
+app.get('/user', function (req,res){
+		UserInfo.find({"name":req.session.name}).exec(function (err,users){
+			if (users.length == 0 || users.length > 1){
+				res.send("ERROR. Please contact Josef Immediantly, or try logging in again. Values {/n req,session.name : "+req.session.name+"/n users.length : "+users.length+"/n}");
+			}else{
+				user = users[0];
+				object = {
+					"name":user.name,
+					"char":user.character,
+					"bio":user.bio
+				}
+				if (object.bio==null){
+					object.bio = "No Bio";
+				}
+				console.log(object);
+				res.send(object);
+			}
+		})
 })
 app.get('/users/:name', function (req,res){
 	name = (req.params.name).replace(':',"");

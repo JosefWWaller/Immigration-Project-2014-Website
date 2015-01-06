@@ -8,26 +8,29 @@
 			<div id="content">
 				<div id="bigChangeBox">
 					<div id="changeBox">
-						<div id="changeTitle">Edit User Info</div>
+						<div id="changeTitle">Verify</div>
+						<div id="changeFieldBox">
+							<div style="float:left; margin-left:15px; text-align : right">
+								<div class="changeText">Username :</div>
+								<div class="changeText">Password :</div>
+							</div>
+							<div style="float:right; margin-right : 15px; text-align : right">
+								<input class="changeBoxInput" id="user"> <br>
+								<input class="changeBoxInput" id="pass"> <br>
+							</div>
+						</div>
+						<div id="changeTitle">Change Info</div>
 						<div id="changeFieldBox">
 							<div style="float:left; margin-left : 15px; text-align : right">
-							<!--<div class="changeText">Old Name :</div>
-							<div class="changeText">Old Character :</div>-->
-							<div class="changeText">New Name :</div>
-							<div class="changeText">New Character :</div>
-							<div class="changeText">Username :</div>
-							<div class="changeText">Password :</div>
-							<div class="changeText">Bio :</div>
-							<br>
+								<div class="changeText">Name :</div>
+								<div class="changeText">Character :</div>
+								<div class="changeText">Bio :</div>
+								<br>
 							</div>
 							<div style="float:right; text-align : left">
-							<!--<input class="changeBoxInput" id="oldName"> <br>
-							<input class="changeBoxInput" id="oldChar"> <br>-->
-							<input class="changeBoxInput" id="newName"> <br>
-							<input class="changeBoxInput" id="newChar"> <br>
-							<input class="changeBoxInput" id="user"> <br>
-							<input class="changeBoxInput" id="pass"> <br>
-							<textarea id="changeTextarea">asdf</textarea>
+								<input class="changeBoxInput" id="newName"> <br>
+								<input class="changeBoxInput" id="newChar"> <br>
+								<textarea id="changeTextarea">asdf</textarea>
 							</div>
 						</div>
 							<div class="submit" id="changeSubmit">Submit</div>
@@ -37,10 +40,23 @@
 			{{>footer}}
 		</div>
 		<script>
+			$.ajax({
+				type:"GET",
+				url : '/user',
+				success: function (data){
+					console.log("ASDFASDF"+data);
+					PlaceInfo(data);
+				}
+			})
+
+			function PlaceInfo (user){
+				console.log(user);
+				document.getElementById('newName').value = user.name;
+				document.getElementById('newChar').value = user.char;
+				document.getElementById('changeTextarea').value = user.bio;
+			}
             function ChangeInfo () {
-            	//oldName = document.getElementById('oldName').value;
             	newName = document.getElementById('newName').value;
-            	//oldChar = document.getElementById('newName').value;
             	newChar = document.getElementById('newChar').value;
             	user = document.getElementById('user').value;
             	pass = document.getElementById('pass').value;
@@ -49,7 +65,7 @@
             		//"oldName":oldName,
             		//"oldChar":oldChar,
             		"name":newName,
-            		"character":newChar,
+            		"char":newChar,
             		"user":user,
             		"pass":pass,
             		"bio":bio
@@ -63,6 +79,8 @@
             		success : function (data){
             			if (data){
             				window.location.assign('/profile/'+data);
+            			}else{
+            				console.log('')
             			}
             		}
             	})

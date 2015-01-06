@@ -839,7 +839,6 @@ a
 	text-align : center;
 	margin-left : auto;
 	margin-right : auto;
-	height : 300px;
 }
 .changeBoxInput
 {
@@ -874,6 +873,7 @@ a
 #changeSubmit
 {
 	background-color:#c7a24c;
+	margin-top : 215px;
 }
 #changeSubmit:hover
 {
