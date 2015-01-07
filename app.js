@@ -177,7 +177,7 @@ app.post('/edituserinfo', function (req,res){
 			user.character = req.body.char;
 			user.bio = req.body.bio;
 			req.session.name = req.body.name;
-			req.session.character = req.body.character;
+			req.session.character = req.body.char;
 			user.save(function (err){
 				if (err) throw err;
 			})
