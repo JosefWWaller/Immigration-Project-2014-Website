@@ -174,7 +174,7 @@ app.post('/edituserinfo', function (req,res){
 				})
 			})
 			user.name = req.body.name;
-			user.character = req.body.character;
+			user.character = req.body.char;
 			user.bio = req.body.bio;
 			req.session.name = req.body.name;
 			req.session.character = req.body.character;
