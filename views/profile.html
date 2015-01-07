@@ -7,7 +7,7 @@
 			{{>header}}
 			<div id="content">
 				<div id="userbox">
-					<div id="pagetitle">Change Account</div>
+					<div id="pagetitle"></div>
 					<div style="float:left">
 						<img id="userpagepic">
 					</div>
@@ -33,6 +33,9 @@
 					posts = JSON.parse(data).posts;
                     isUser = JSON.parse(data).isUser;
 					console.log(user);
+					name = user.name+"'s Account";
+   					name = name.charAt(0).toUpperCase() + name.slice(1);
+					document.getElementById('pagetitle').innerHTML = name;
 					document.getElementById('userName').innerHTML = user.name;
 					document.getElementById('userChar').innerHTML = user.character;
 					document.getElementById('userpagepic').src = "/db_images/"+user.image;
