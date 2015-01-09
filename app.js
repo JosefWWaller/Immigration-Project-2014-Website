@@ -348,6 +348,7 @@ app.post('/userpic', function (req, res){
     var file_name = files['upload'].name;
 
     var userId = fields['user_id'];
+    console.log(form);
     UserInfo.findById(userId, function (err, user) {
     	if (err) throw err;
 
@@ -395,8 +396,11 @@ app.post('/register', function (req,res){
 		'approved':false,
 		'admin':req.body.code
 	};
-	if (newAccount.name.slice(-1)==" "){
+	if ((newAccount.name).slice(-1)==" "){
 		newAccount.name = newAccount.name.slice(0,-1);
+		console.log("Sliced to "+newAccount.name+"!");
+	}else{
+		console.log("No slicing");
 	}
 	toReturn = {};
 	UserInfo.find().exec(function (err,data){

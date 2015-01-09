@@ -43,6 +43,7 @@
 								<div class='required' id='characterreq'>Required</div>
 								<div class='required' id='newuserreq'>Required</div>
 								<div class='required' id='newpassreq'>Required</div>
+								<div class='required' id='codereq'>Required</div>
 								<div class='required' id='picreq'>Required</div>
 							</div>
 							<div id='textareabox'>
@@ -172,6 +173,7 @@
 				}
 				if (!error){
 					document.getElementById('user_id').value = data._id;
+					console.log(data._id);
 					document.getElementById('uploadpicform').submit();
 					console.log("ASDFSDFAASDF");
 				}
