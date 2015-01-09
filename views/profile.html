@@ -22,9 +22,10 @@
 			{{>footer}}
 		</div>
 		<script>
+            userName = "{{name}}".replace(/&amp;/g, '&')
 			$.ajax({
 				type : "GET",
-				url : "/users/:{{name}}",
+				url : "/users/"+userName,
 				error : function (err){
 					throw err;
 				},

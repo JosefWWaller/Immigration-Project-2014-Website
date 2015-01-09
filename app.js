@@ -186,6 +186,7 @@ app.post('/edituserinfo', function (req,res){
 	})
 })
 app.get('/user', function (req,res){
+		name = (req.session.name).replace(/&amp;/g, '&');
 		UserInfo.find({"name":req.session.name}).exec(function (err,users){
 			if (users.length == 0 || users.length > 1){
 				res.send("ERROR. Please contact Josef Immediantly, or try logging in again. Values {/n req,session.name : "+req.session.name+"/n users.length : "+users.length+"/n}");
