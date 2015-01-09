@@ -131,7 +131,7 @@ app.get('/approve', function (req,res){
 })
 app.get('/me', function(req,res){
 	if (req.session.loggedin){
-		res.redirect('/profile/:'+req.session.name);
+		res.redirect('/profile/'+req.session.name);
 	}
 })
 
