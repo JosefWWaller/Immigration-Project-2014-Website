@@ -434,11 +434,12 @@ app.post('/register', function (req,res){
 			}
 			UserInfo.create(newAccount, function (err, user) {
 				if (err) throw err;
+				toReturn._id = user._id;
+				toSend = JSON.stringify(toReturn);
+				console.log(toSend);
+				res.send(toSend);
 			})
 		}
-		toSend = JSON.stringify(toReturn);
-		console.log(toSend);
-		res.send(toSend);
 	})
 })
 
