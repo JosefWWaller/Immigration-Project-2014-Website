@@ -108,6 +108,30 @@
                         contentdiv.className = 'posttext';
                         whitebackdiv.appendChild(contentdiv);
 
+                            //Comments
+                            if (!comments.length < 1){
+                                comment = comments[0];
+
+                                commentdiv = document.createElement('div');
+                                commentdiv.className = 'indexComment post'+color;
+                                document.getElementById('content').appendChild(commentdiv);
+
+                                commentAuthor = document.createElement('div');
+                                commentAuthor.className = 'inCommentAuthor';
+                                commentAuthor.innerHTML = comment.user;
+                                commentdiv.appendChild(commentAuthor);
+
+                                commentCon = document.createElement('div');
+                                commentCon.className = 'inComentCon';
+                                commentCon.innerHTML = comment.content;
+                                commentdiv.appendChild(commentCon);
+
+                                if (color == 'red'){
+                                    color = 'brown';
+                                }else{
+                                    color = 'red';
+                                }
+                            }
                         if (color == 'red'){
                             color = 'brown';
                         }else{

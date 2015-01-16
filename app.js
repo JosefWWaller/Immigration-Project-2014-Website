@@ -207,6 +207,8 @@ app.get('/user', function (req,res){
 })
 app.get('/users/:name', function (req,res){
 	name = (req.params.name).replace(':',"");
+		name = name.replace('+(slash)+','/');
+		console.log(name);
 	UserInfo.find({"name" : name}).exec(function (err,users){
 		if (users.length != 1){
 			console.log("ERROR 101");

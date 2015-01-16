@@ -75,7 +75,8 @@
 					author = document.createElement('a');
 					author.className = 'postAuthor';
 					author.innerHTML = post.author;
-					author.setAttribute('href','/profile/'+post.author);
+					authorName = (post.author).replace('/','+(slash)+')
+					author.setAttribute('href','/profile/'+authorName);
 					posttextbox.appendChild(author);
 
 					//Post Text
