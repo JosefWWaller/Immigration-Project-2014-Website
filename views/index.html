@@ -117,7 +117,8 @@
                             authordiv = document.createElement('a');
                             authordiv.className = 'postAuthor';
                             authordiv.innerHTML = post.author;
-                            authordiv.setAttribute('href','/profile/'+post.author);
+                            authorName = (post.author).replace('/','+(slash)+')
+                            authordiv.setAttribute('href','/profile/'+authorName);
                             whitebackdiv.appendChild(authordiv);
 
                             //Creates the content div

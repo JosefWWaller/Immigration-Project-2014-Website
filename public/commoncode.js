@@ -50,7 +50,8 @@ function SetHeader (data) {
         user = document.createElement('a');
         user.className = "button dropMenuItem";
         user.innerHTML = "My Profile";
-        user.href = "/me";
+        authorName = (received.name).replace('/','+(slash)+')
+        user.href = "/profile/"+authorName;
         document.getElementById('dropMenu').appendChild(user);
     }
     if (received.admin=='true'){
