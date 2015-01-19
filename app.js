@@ -219,17 +219,33 @@ app.get('/users/:name', function (req,res){
 		user.password = null;
 		user.username = null;
 		Post.find({"author" : name}).exec(function (err,posts){
-			toReturn = {
-				"userInfo":user,
-				"posts":posts
-			}
-			if (req.session.name == name){
-				toReturn.isUser = true;
-			}else{
-				toReturn.isUser = false;
-			}
-			toSend = JSON.stringify(toReturn);
-			res.send(toSend);
+			allFunc = [];
+			posts.forEach(function (post) {
+
+				var postId = post._id;
+				commentsFunction = function (callback) {
+					Comment.find({ "post_id": postId }).exec(function (err, data){
+						if (err) {
+							callback(err, null);
+						} else {
+							postObject = {
+								"post": post,
+								"comments": data
+							};
+							callback(null, postObject);
+						}
+					})
+				}
+				allFunc.push(commentsFunction);
+			})
+			async.parallel(allFunc, function (err, datas) {
+				toReturn = {
+					"userInfo" : user,
+					"posts":datas
+				}
+				toSend = JSON.stringify(toReturn);
+				res.send(toSend);
+			});
 		})
 	})
 })
@@ -443,9 +459,10 @@ app.post('/register', function (req,res){
 				if (err) throw err;
 				toReturn._id = user._id;
 				toSend = JSON.stringify(toReturn);
-				console.log(toSend);
 				res.send(toSend);
 			})
+		}else{
+			res.send(toSend);
 		}
 	})
 })
