@@ -306,8 +306,8 @@ app.get('/tba',function (req,res){
 	UserInfo.find({ approved: false }).exec(function (err,users){
 		if (err) throw err;
 		stringToSend = JSON.stringify(users);
-		if (req.admin.user){
-		res.send(stringToSend);
+		if (req.session.admin){
+			res.send(stringToSend);
 		}else{
 			res.redirect('/index');
 		}
