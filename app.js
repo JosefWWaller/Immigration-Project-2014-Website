@@ -175,7 +175,8 @@ app.post('/edituserinfo', function (req,res){
 			})
 			user.name = req.body.name;
 			user.character = req.body.char;
-			user.bio = req.body.bio;
+			user.bio = (req.body.bio).replace(/\r?\n/g, '<br />')
+			console.log("User.bio = "+user.bio)
 			req.session.name = req.body.name;
 			req.session.character = req.body.char;
 			user.save(function (err){
@@ -243,6 +244,9 @@ app.get('/users/:name', function (req,res){
 					"userInfo" : user,
 					"posts":datas
 				}
+				if (req.session.name == name){
+					toReturn.isUser = true;
+				}
 				toSend = JSON.stringify(toReturn);
 				res.send(toSend);
 			});
@@ -302,7 +306,11 @@ app.get('/tba',function (req,res){
 	UserInfo.find({ approved: false }).exec(function (err,users){
 		if (err) throw err;
 		stringToSend = JSON.stringify(users);
+		if (req.admin.user){
 		res.send(stringToSend);
+		}else{
+			res.redirect('/index');
+		}
 	})
 })
 app.post('/approveaccount', function (req,res){
