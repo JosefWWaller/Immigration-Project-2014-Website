@@ -851,6 +851,20 @@ a
 	font-size : 17px;
 	padding : 2px;
 }
+.changeBoxInput::-webkit-input-placeholder { /* WebKit browsers */
+    color:    #ff0000;
+}
+.changeBoxInput:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+   color:    #ff0000;
+   opacity:  1;
+}
+.changeBoxInput::-moz-placeholder { /* Mozilla Firefox 19+ */
+   color:    #ff0000;
+   opacity:  1;
+}
+.changeBoxInput:-ms-input-placeholder { /* Internet Explorer 10+ */
+   color:    #ff0000;
+}
 .changeText
 {
 	margin-bottom : 17px;

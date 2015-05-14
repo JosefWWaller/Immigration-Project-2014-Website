@@ -53,7 +53,9 @@
 				console.log(user);
 				document.getElementById('newName').value = user.name;
 				document.getElementById('newChar').value = user.char;
-				document.getElementById('changeTextarea').value = user.bio;
+				bio = user.bio).replace('<br />', /\r?\n/g)
+				console.log(bio);
+				document.getElementById('changeTextarea').value = bio;
 			}
             function ChangeInfo () {
             	newName = document.getElementById('newName').value;
@@ -80,7 +82,10 @@
             			if (data){
             				window.location.assign('/profile/'+data);
             			}else{
-            				console.log('')
+            				document.getElementById('user').style.border = " 2px solid red;"
+            				document.getElementById('user').placeholder = "Required";
+            				document.getElementById('pass').style.border = " 2px solid red;"
+            				document.getElementById('pass').placeholder = "Required";
             			}
             		}
             	})
