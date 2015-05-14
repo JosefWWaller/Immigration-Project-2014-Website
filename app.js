@@ -93,6 +93,14 @@ app.use(session({
 }));
 
 //Pages
+app.get('/zelda', function (req,res){
+	var file = fs.readFile("zelda.zip", 'utf-8');
+
+	res.setHeader('Content-Type', 'applications/zip');
+	res.setHeader('Content-Disposition', 'attachment; filename=views/zelda.zip');
+	res.send("");
+	res.end();
+})
 app.get('/index', function (req,res){
 	res.render('index.html');
 })
